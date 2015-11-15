@@ -42,13 +42,13 @@ namespace UnityEventsInternal
 			public override void LockSystem()
 			{
 				UnityEventSystem<T> system = (UnityEventSystem<T>) eventSystem;
-				system.lockSubscriptions = true;
+				system.LockGeneration();
 			}
 
 			public override void UnlockSystem()
 			{
 				UnityEventSystem<T> system = (UnityEventSystem<T>) eventSystem;
-				system.lockSubscriptions = false;
+				system.UnlockGeneration();
 			}
 
 			public static QueuedEvent<T> Get()
@@ -83,6 +83,11 @@ namespace UnityEventsInternal
 			{
 				_eventSystemsList[i].CleanUp();
 			}
+		}
+
+		private void OnDisable()
+		{
+			_queuedEvents.Clear();
 		}
 
 		public EventHandle<T> Subscribe<T>(System.Action<T> callback) where T : struct
@@ -135,6 +140,11 @@ namespace UnityEventsInternal
 			}
 
 			handle.eventSystem.Unsubscribe(handle);
+		}
+
+		public void TurnOnDebug<T>() where T : struct
+		{
+			GetSystem<T>().debug = true;
 		}
 
 		private UnityEventSystem<T> GetSystem<T>() where T : struct
