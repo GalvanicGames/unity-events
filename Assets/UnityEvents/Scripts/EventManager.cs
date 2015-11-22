@@ -169,6 +169,11 @@ namespace UnityEvents
 			GetSystemComp(obj);
 		}
 
+		public static EventHandle<T> GetHandle<T>(this GameObject obj) where T : struct
+		{
+			return GetSystemComp(obj).GetHandle<T>();
+		}
+
 		private static MonoEventSystem GetSystemComp(GameObject obj)
 		{
 			MonoEventSystem systemComp = obj.GetComponent<MonoEventSystem>();

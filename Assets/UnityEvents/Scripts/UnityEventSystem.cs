@@ -22,15 +22,17 @@ namespace UnityEventsInternal
 
 	public class UnityEventSystem<T> : UnityEventSystemBase where T : struct
 	{
-		private LinkedList<EventSubscription<T>> _callbacks = new LinkedList<EventSubscription<T>>();
-		private bool _reset;
-		private int _currentGeneration;
-		private bool _externalLocked;
-		private LinkedListNode<EventSubscription<T>> _nextNode;
-		private bool _sendingEvent;
+		public bool lockSubscriptions;
 
-		private static Stack<LinkedListNode<EventSubscription<T>>> _nodePool;
+		private Queue<Subscription> _queuedSubscriptions = new Queue<Subscription>();
+		private LinkedList<System.Action<T>> _callbacks = new LinkedList<System.Action<T>>();
+		private bool _reset;
+		private bool _internalLockSubscriptions;
+
+		private static Stack<LinkedListNode<System.Action<T>>> _nodePool;
 		private const int INITIAL_NODE_POPULATION = 100;
+
+		private bool locked { get { return lockSubscriptions || _internalLockSubscriptions; } }
 
 		public bool debug { get; set; }
 
@@ -39,29 +41,42 @@ namespace UnityEventsInternal
 			onResetAll += Reset;
 		}
 
+		private struct Subscription
+		{
+			public LinkedListNode<System.Action<T>> node;
+
+			public Subscription(LinkedListNode<System.Action<T>> node)
+			{
+				this.node = node;
+			}
+		}
+
 		public void SendEvent(T ev)
 		{
-			// External locked means we might be sending multiple events to the same generation.
-			if (!_externalLocked)
-			{
-				_currentGeneration++;
-			}
+			_internalLockSubscriptions = true;
+			SendSingleEvent(ev);
+			_internalLockSubscriptions = false;
+			HandlePostEvent();
+		}
 
-			LinkedListNode<EventSubscription<T>> node = _callbacks.First;
-			_sendingEvent = true;
+		private LinkedListNode<System.Action<T>> _nextNode;
+
+		private void SendSingleEvent(T ev)
+		{
+			LinkedListNode<System.Action<T>> node = _callbacks.First;
 
 			while (node != null)
 			{
 				_nextNode = node.Next;
 
-				if (node.Value.callback.Target != null && node.Value.generation < _currentGeneration)
+				if (node.Value.Target != null)
 				{
 					if (debug)
 					{
-						Debug.Log("Sending event: " + node.Value.callback.Target + " " + node.Value);
+						Debug.Log("Sending event: " + node.Value.Target + " " + node.Value);
 					}
 
-					node.Value.callback(ev);
+					node.Value(ev);
 				}
 				else
 				{
@@ -72,13 +87,28 @@ namespace UnityEventsInternal
 
 				node = _nextNode;
 			}
+		}
 
-			_sendingEvent = false;
-
+		private void HandlePostEvent()
+		{
 			if (_reset)
 			{
 				_reset = false;
 				Reset();
+			}
+			else
+			{
+				while (_queuedSubscriptions.Count > 0)
+				{
+					Subscription sub = _queuedSubscriptions.Dequeue();
+
+					if (debug)
+					{
+						Debug.Log("Handling Queued Subscribe: " + sub.node.Value.Target + " " + sub.node.Value);
+					}
+
+					Subscribe(sub.node);
+				}
 			}
 		}
 
@@ -88,37 +118,54 @@ namespace UnityEventsInternal
 		/// </summary>
 		public override void Reset()
 		{
-			if (_sendingEvent)
+			if (locked)
 			{
 				_reset = true;
 				return;
 			}
 
-			_callbacks = new LinkedList<EventSubscription<T>>();
+			_queuedSubscriptions = new Queue<Subscription>();
+			_callbacks = new LinkedList<System.Action<T>>();
 		}
 
 		public EventHandle<T> Subscribe(System.Action<T> callback)
 		{
-			EventSubscription<T> sub = new EventSubscription<T>();
-			sub.callback = callback;
-			sub.generation = _currentGeneration;
-			
 			EventHandle<T> handle = new EventHandle<T>();
-			handle.callbackNode = GetNode(sub);
+			handle.callbackNode = GetNode(callback);
 
-			if (debug)
+			if (locked)
 			{
-				Debug.Log("Subscribe: " + handle.callbackNode.Value.callback.Target + " " + handle.callbackNode.Value.callback);
-			}
+				if (debug)
+				{
+					Debug.Log("Queued Subscribe: " + handle.callbackNode.Value.Target + " " + handle.callbackNode.Value);
+				}
 
-			_callbacks.AddLast(handle.callbackNode);
+				_queuedSubscriptions.Enqueue(new Subscription(handle.callbackNode));
+			}
+			else
+			{
+				if (debug)
+				{
+					Debug.Log("Subscribe: " + handle.callbackNode.Value.Target + " " + handle.callbackNode.Value);
+				}
+
+				Subscribe(handle.callbackNode);
+			}
 
 			return handle;
 		}
 
+		private void Subscribe(LinkedListNode<System.Action<T>> node)
+		{
+			if (node.List == null)
+			{
+				_callbacks.AddLast(node);
+			}
+		}
+
 		public void Unsubscribe(System.Action<T> callback)
 		{
-			LinkedListNode<EventSubscription<T>> node = FindLastNode(callback);
+			LinkedListNode<System.Action<T>> node = _callbacks.FindLast(callback);
 
 			if (node == null)
 			{
@@ -133,23 +180,6 @@ namespace UnityEventsInternal
 			Unsubscribe(node);
 		}
 
-		private LinkedListNode<EventSubscription<T>> FindLastNode(System.Action<T> callback)
-		{
-			LinkedListNode<EventSubscription<T>> node = _callbacks.Last;
-
-			while (node != null)
-			{
-				if (node.Value.callback == callback)
-				{
-					return node;
-				}
-
-				node = node.Previous;
-			}
-
-			return null;
-		}
-
 		public void Unsubscribe(EventHandle<T> handle)
 		{
 			if (handle.callbackNode.List != _callbacks)
@@ -160,7 +190,7 @@ namespace UnityEventsInternal
 			Unsubscribe(handle.callbackNode);
 		}
 
-		private void Unsubscribe(LinkedListNode<EventSubscription<T>> node)
+		private void Unsubscribe(LinkedListNode<System.Action<T>> node)
 		{
 			if (node == _nextNode)
 			{
@@ -175,19 +205,19 @@ namespace UnityEventsInternal
 			_nodePool.Push(node);
 		}
 
-		private static LinkedListNode<EventSubscription<T>> GetNode(EventSubscription<T> callback)
+		private static LinkedListNode<System.Action<T>> GetNode(System.Action<T> callback)
 		{
 			if (_nodePool == null)
 			{
-				_nodePool = new Stack<LinkedListNode<EventSubscription<T>>>();
+				_nodePool = new Stack<LinkedListNode<System.Action<T>>>();
 
 				for (int i = 0; i < INITIAL_NODE_POPULATION; i++)
 				{
-					_nodePool.Push(new LinkedListNode<EventSubscription<T>>(new EventSubscription<T>()));
+					_nodePool.Push(new LinkedListNode<System.Action<T>>(null));
 				}
 			}
 
-			LinkedListNode<EventSubscription<T>> node;
+			LinkedListNode<System.Action<T>> node;
 
 			if (_nodePool.Count > 0)
 			{
@@ -195,7 +225,7 @@ namespace UnityEventsInternal
 			}
 			else
 			{
-				node = new LinkedListNode<EventSubscription<T>>(new EventSubscription<T>());
+				node = new LinkedListNode<System.Action<T>>(null);
 			}
 
 			node.Value = callback;
@@ -207,17 +237,6 @@ namespace UnityEventsInternal
 		{
 			onResetAll -= Reset;
 			onGlobalReset -= Reset;
-		}
-
-		public void LockGeneration()
-		{
-			_externalLocked = true;
-			_currentGeneration++;
-		}
-
-		public void UnlockGeneration()
-		{
-			_externalLocked = false;
 		}
 
 		public static UnityEventSystem<T> global
@@ -239,13 +258,13 @@ namespace UnityEventsInternal
 
 		public override void UnsubscribeTarget(object target)
 		{
-			LinkedListNode<EventSubscription<T>> node = _callbacks.First;
+			LinkedListNode<System.Action<T>> node = _callbacks.First;
 
 			while (node != null)
 			{
-				LinkedListNode<EventSubscription<T>> nextNode = node.Next;
+				LinkedListNode<System.Action<T>> nextNode = node.Next;
 
-				if (node.Value.callback.Target == target)
+				if (node.Value.Target == target)
 				{
 					Unsubscribe(node);
 				}

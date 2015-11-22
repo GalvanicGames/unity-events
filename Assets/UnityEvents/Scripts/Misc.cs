@@ -11,7 +11,7 @@ namespace UnityEvents
 	/// </summary>
 	public struct EventHandle<T> where T : struct
 	{
-		public LinkedListNode<EventSubscription<T>> callbackNode;
+		public LinkedListNode<System.Action<T>> callbackNode;
 
 		// The following are only used by the local event systems.
 		public MonoEventSystem monoEventSystem;
@@ -24,14 +24,4 @@ namespace UnityEvents
 		Immediate,
 		OnNextFixedUpdate
 	}
-}
-
-namespace UnityEventsInternal
-{
-	public struct EventSubscription<T> where T : struct
-	{
-		public System.Action<T> callback;
-		public int generation;
-	}
-
 }

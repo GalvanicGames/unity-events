@@ -42,13 +42,13 @@ namespace UnityEventsInternal
 			public override void LockSystem()
 			{
 				UnityEventSystem<T> system = (UnityEventSystem<T>) eventSystem;
-				system.LockGeneration();
+				system.lockSubscriptions = true;
 			}
 
 			public override void UnlockSystem()
 			{
 				UnityEventSystem<T> system = (UnityEventSystem<T>) eventSystem;
-				system.UnlockGeneration();
+				system.lockSubscriptions = false;
 			}
 
 			public static QueuedEvent<T> Get()
@@ -219,6 +219,16 @@ namespace UnityEventsInternal
 				}
 			}
 
+			return GetHandle(system);
+		}
+
+		public EventHandle<T> GetHandle<T>() where T : struct
+		{
+			return GetHandle(GetSystem<T>());
+		}
+
+		private EventHandle<T> GetHandle<T>(UnityEventSystem<T> system) where T : struct
+		{
 			EventHandle<T> handle = new EventHandle<T>();
 			handle.eventSystem = system;
 			handle.monoEventSystem = this;
