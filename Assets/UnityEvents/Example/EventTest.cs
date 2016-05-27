@@ -40,7 +40,7 @@ namespace UnityEventsTest
 
 		private void SendEvent()
 		{
-			gameObject.SendEvent(new MyEvent(), _handles[0]);
+			//gameObject.SendEvent(new MyEvent(), _handles[0]);
 		}
 
 		private void Subscribe()
@@ -49,11 +49,11 @@ namespace UnityEventsTest
 			{
 				if (i > 0)
 				{
-					_handles.Add(gameObject.Subscribe(_func, _handles[0]));
+					//_handles.Add(gameObject.Subscribe(_func, _handles[0]));
 				}
 				else
 				{
-					_handles.Add(gameObject.Subscribe(_func));
+					//_handles.Add(gameObject.Subscribe(_func));
 				}
 			}
 		}
@@ -62,7 +62,7 @@ namespace UnityEventsTest
 		{
 			for (int i = 0; i < _handles.Count; i++)
 			{
-				gameObject.Unsubscribe(_handles[i]);
+				//gameObject.Unsubscribe(_handles[i]);
 			}
 
 			_handles.Clear();
