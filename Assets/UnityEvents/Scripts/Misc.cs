@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using UnityEventsInternal;
 
 namespace UnityEvents
 {
 	/// <summary>
-	/// This is used for optimization, by passing this in the event system
-	/// will be able to avoid dictionary look ups and list searching.
+	/// This is used for optimization, by using this handle the event
+	/// system can avoid dictionary look ups and list searching.
 	/// 
 	/// If optimization isn't a worry then these can be disregarded.
 	/// </summary>
+	/// <typeparam name="T">The event associated with the handle.</typeparam>
 	public struct EventHandle<T> where T : struct
 	{
 		private UnityEventSystem<T> _eventSystem;
@@ -48,12 +48,20 @@ namespace UnityEvents
 			return !(a == b);
 		}
 
+		/// <summary>
+		/// Send the event to the system stored by the handle.
+		/// </summary>
+		/// <param name="ev">The event to send.</param>
 		public void SendEvent(T ev)
 		{
 			_eventSystem.SendEvent(ev);
 		}
 	}
 
+	/// <summary>
+	/// Used for more efficient subscriptions and unsubscriptions.
+	/// </summary>
+	/// <typeparam name="T">The event associated with the handle.</typeparam>
 	public struct SubscriptionHandle<T> where T : struct
 	{
 		private UnityEventSystem<T> _system;
@@ -81,6 +89,9 @@ namespace UnityEvents
 			_node = null;
 		}
 
+		/// <summary>
+		/// Subscribe the function to the event associated with this handle.
+		/// </summary>
 		public void Subscribe()
 		{
 			if (_callback != null)
@@ -93,34 +104,80 @@ namespace UnityEvents
 			}
 		}
 
+		/// <summary>
+		/// Unsubscribe the function from the event associated with this handle.
+		/// </summary>
 		public void Unsubscribe()
 		{			
 			_system.UnsubscribeWithNode(_node);
 		}
 	}
 
+	/// <summary>
+	/// The send modes that determine when subscribes have their functions invoked.
+	/// </summary>
 	public enum EventSendMode
 	{
+		/// <summary>
+		/// Use whatever is currently set on EventManager.defaultSendMode. The default is Immediate.
+		/// </summary>
 		Default,
+
+		/// <summary>
+		/// Invoke the functions immediately.
+		/// </summary>
 		Immediate,
+
+		/// <summary>
+		/// Invoke the functions on the next fixed update.
+		/// </summary>
 		OnNextFixedUpdate,
+
+		/// <summary>
+		/// Invoke the functions at the end of this frame during LateUpdate.
+		/// </summary>
 		OnLateUpdate
 	}
 
+	/// <summary>
+	/// Marks a function for automatic subscription and unsubscription
+	/// to the global event system when a GameObject is enabled and
+	/// disabled. REQUIRES an EventAttributeHandler component on 
+	/// the GameObject.
+	/// </summary>
 	[System.AttributeUsage(System.AttributeTargets.Method)]
 	public class GlobalEventListener : System.Attribute
 	{
 	
 	}
+
+	/// <summary>
+	/// Marks a function for automatic subscription and unsubscription
+	/// to the local event system when a GameObject is enabled and
+	/// disabled. REQUIRES an EventAttributeHandler component on 
+	/// the GameObject.
+	/// </summary>
 	[System.AttributeUsage(System.AttributeTargets.Method)]
 	public class LocalEventListener : System.Attribute
 	{
 	}
 
+	/// <summary>
+	/// Marks a function for automatic subscription and unsubscription
+	/// to the a parent who has a specific component. REQUIRES an EventAttributeHandler component on 
+	/// the GameObject.
+	/// </summary>
 	[System.AttributeUsage(System.AttributeTargets.Method)]
 	public class ParentCompEventListener : System.Attribute
 	{
+		/// <summary>
+		/// The type of the component to search parents for.
+		/// </summary>
 		public System.Type compToLookFor;
+
+		/// <summary>
+		/// Should we check ourselves for the component?
+		/// </summary>
 		public bool skipSelf;
 
 		public ParentCompEventListener(System.Type compType, bool skipSelf = false)

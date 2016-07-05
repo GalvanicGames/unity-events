@@ -20,8 +20,6 @@ namespace UnityEvents
 		private List<ParentListenerBase> _parentSubscriptions = new List<ParentListenerBase>();
 		private Transform _curParent;
 
-		//private List<ParentListenersBase> _parentSubscriptions = new List<ParentListenersBase>();
-
 		private abstract class ParentListenerBase
 		{
 			public AttributeSubscription attributeSubscription;

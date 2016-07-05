@@ -473,6 +473,9 @@ namespace UnityEventsInternal
 
 		public override void UnsubscribeTarget(object target)
 		{
+			// PERF: This could be made more efficient by using
+			// a dictionary with the key being target and the list
+			// of subscriptions being the value.
 			LinkedListNode<EventCallback<T>> node = _callbacks.First;
 
 			while (node != null)
