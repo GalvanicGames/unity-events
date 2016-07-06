@@ -26,35 +26,35 @@ public class Examples : MonoBehaviour
 	{
 		// Examples of how to subscribe to global and local events. We are
 		// subscribing to the event MyExampleEvent which will invoke
-		// the function OnStandardEvent when the global or local event
+		// the function ListenerFunction when the global or local event
 		// is sent. Note that nothing prevents a function from subscribing
 		// multiple times.
 
 		// Global subscription
-		EventManager.Subscribe<MyExampleEvent>(OnStandardEvent);
+		EventManager.Subscribe<MyExampleEvent>(ListenerFunction);
 
 		// Local subscription
-		gameObject.Subscribe<MyExampleEvent>(OnStandardEvent);
+		gameObject.Subscribe<MyExampleEvent>(ListenerFunction);
 	}
 
 	public void Unsubscribe()
 	{
 		// Examples of how to unsubscribe to global and local events.
-		// Specifically it will unsubscribe the function OnStandardEvent
+		// Specifically it will unsubscribe the function ListenerFunction
 		// from the event MyExampleEvent. Unsubscribing is safe to do
 		// even if the function isn't subscribed.
 
 		// Unsubscribe from global event.
-		EventManager.Unsubscribe<MyExampleEvent>(OnStandardEvent);
+		EventManager.Unsubscribe<MyExampleEvent>(ListenerFunction);
 
 		// Unsubscribe from local event.
-		gameObject.Unsubscribe<MyExampleEvent>(OnStandardEvent);
+		gameObject.Unsubscribe<MyExampleEvent>(ListenerFunction);
 }
 
 	public void SendEvents()
 	{
 		// Examples of how to send the global and local events. If
-		// subscribed it will invoke the function OnStandardEvent.
+		// subscribed it will invoke the function ListenerFunction.
 
 		// Send the global event.
 		EventManager.SendEvent(new MyExampleEvent(54, null, true));
@@ -67,10 +67,10 @@ public class Examples : MonoBehaviour
 		gameObject.SendEventDeep(new MyExampleEvent(8, gameObject, false));
 	}
 
-	private void OnStandardEvent(MyExampleEvent ev)
+	private void ListenerFunction(MyExampleEvent ev)
 	{
 		Debug.LogFormat(
-			"Standard Event Triggered: Integer: {0} GameObject: {1} Was Global Event?: {2}",
+			"ListenerFunction Invoked: Integer: {0} GameObject: {1} Was Global Event?: {2}",
 			ev.anIntProperty,
 			ev.anObjectProperty == null ? "null" : ev.anObjectProperty.name,
 			ev.wasGlobal);
@@ -120,7 +120,7 @@ public class Examples : MonoBehaviour
 
 		// Subscription
 		EventManager.SubscribeTerminable<MyExampleEvent>(
-			OnStandardEventTerminable);
+			ListenerFunctionTerminable);
 
 		// Sending the event
 		if (EventManager.SendEvent(new MyExampleEvent(2, null, true)))
@@ -136,13 +136,13 @@ public class Examples : MonoBehaviour
 
 		// Unsubscription
 		EventManager.UnsubscribeTerminable<MyExampleEvent>(
-			OnStandardEventTerminable);
+			ListenerFunctionTerminable);
 	}
 
-	private bool OnStandardEventTerminable(MyExampleEvent ev)
+	private bool ListenerFunctionTerminable(MyExampleEvent ev)
 	{
 		Debug.LogFormat(
-			"Standard Event Triggered: Integer: {0} GameObject: {1} Was Global Event?: {2}",
+			"Listener Function Terminable Invoked: Integer: {0} GameObject: {1} Was Global Event?: {2}",
 			ev.anIntProperty,
 			ev.anObjectProperty == null ? "null" : ev.anObjectProperty.name,
 			ev.wasGlobal);
@@ -180,6 +180,13 @@ public class Examples : MonoBehaviour
 
 		// Checks if the local event system has any subscribers.
 		hasSubscribers = gameObject.HasSubscribers<MyExampleEvent>();
+	}
+
+	public void UnsubscribeTarget()
+	{
+		// Unsubscribes all functions associated with the object passed in.
+		EventManager.UnsubscribeTarget(this);
+		gameObject.UnsubscribeTarget(this);
 	}
 
 	public void Initialization()
@@ -253,10 +260,10 @@ public class Examples : MonoBehaviour
 
 		// Global Events
 		SubscriptionHandle<MyExampleEvent> globalHandle = 
-			EventManager.GetSubscriptionHandle<MyExampleEvent>(OnStandardEvent);
+			EventManager.GetSubscriptionHandle<MyExampleEvent>(ListenerFunction);
 
 		SubscriptionHandle<MyExampleEvent> globalTerminableHandle =
-			EventManager.GetSubscriptionHandleTerminable<MyExampleEvent>(OnStandardEventTerminable);
+			EventManager.GetSubscriptionHandleTerminable<MyExampleEvent>(ListenerFunctionTerminable);
 
 		globalHandle.Subscribe();
 		globalTerminableHandle.Subscribe();
@@ -268,10 +275,10 @@ public class Examples : MonoBehaviour
 
 		// Local Events
 		SubscriptionHandle<MyExampleEvent> localHandle =
-			gameObject.GetSubscriptionHandle<MyExampleEvent>(OnStandardEvent);
+			gameObject.GetSubscriptionHandle<MyExampleEvent>(ListenerFunction);
 
 		SubscriptionHandle<MyExampleEvent> localTerminableHandle =
-			gameObject.GetSubscriptionHandleTerminable<MyExampleEvent>(OnStandardEventTerminable);
+			gameObject.GetSubscriptionHandleTerminable<MyExampleEvent>(ListenerFunctionTerminable);
 
 		localHandle.Subscribe();
 		localTerminableHandle.Subscribe();
