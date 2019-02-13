@@ -3,7 +3,7 @@
 # =============== #
 [Tt]emp/
 [Oo]bj/
-[Bb]uild
+[Bb]uild/
 [Ll]ibrary/
 sysinfo.txt
 .app
@@ -21,6 +21,10 @@ sysinfo.txt
 *.user
 *.unityproj
 *.booproj
+.vscode/
+VSCode*
+VSCode/
+.vs/
  
 # ============ #
 # OS generated #
@@ -33,8 +37,6 @@ sysinfo.txt
 *Icon?.meta
 ehthumbs.db
 [Tt]humbs.db
-.zip
-*.zip
 
 # ========== #
 # Plugins    #
@@ -45,8 +47,30 @@ BIU/
 BIU.meta
 AutoSaver/
 AutoSaver.meta
+GeneratedOdinEditors.dll*
+Assets/External/Sirenix/Assemblies/Editor/
+Assets/External/Sirenix/Assemblies/Editor.meta
+
+# ======= #
+# FMOD    #
+# ======= #
+/Assets/FMODStudioCache.asset
+/Assets/FMODStudioCache.asset.meta
+fmod.log
+fmod_editor.log
+!Assets/FMOD/StreamingAssets/fmod_audio/Build
 
 # ======= #
 # Other   #
 # ======= #
 out/
+logs/
+build-process/
+sdks/steamworks_sdk_142/tools/ContentBuilder/content/
+sdks/build_loader/
+
+.*
+!/.gitignore
+!/Assets/PlayFabEditorExtensions/Editor/Resources/.CloudScript.js
+Assets/Plugins/Editor/JetBrains/
+Assets/Plugins/Editor/JetBrains.meta
