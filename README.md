@@ -1,7 +1,7 @@
 # Unity Events 2.0 #
-A performant code focused strongly typed publisher/subscriber event system. Supports global event system and per GameObject event systems that send deferred events to be processed at a later time. Allows regular callback events and multithreaded jobs that trigger on events.
+A performant code focused strongly typed publisher/subscriber event system. Supports global event system and per GameObject event systems that send deferred events to be processed at a later tick (FixedUpdate, Update, or LateUpdate). Allows regular callback events and multithreaded jobs that trigger on events.
 
-Custom event system can be created for more control if the supplied ones aren't sufficient.
+Custom Event Systems can be created to control when events are processed instead of relying on the update ticks.
 
 Uses Unity's new Job System and the burst compiler. Both of those features are considered in preview and experimental. Use at your own risk!
 
@@ -57,4 +57,4 @@ public void SendEvents()
 ```
 
 ## Dropped Features
-Unity Events 2.0 was rebuilt with performance and flexibility more in mind. Because of this some features of the original version of Unity Events have been dropped. If these features are important than the previous version of Unity Events can be found [here]().
+Unity Events 2.0 was rebuilt with performance and flexibility more in mind. Because of this some features of the original version of Unity Events have been dropped. If these features are important than the previous version of Unity Events can be found [here](https://github.com/GalvanicGames/unity-events/releases/tag/1.0).
