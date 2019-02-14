@@ -14,6 +14,7 @@ namespace UnityEvents.Test
 		{
 			Time.timeScale = 0;
 		}
+		
 		[TearDown]
 		public void TearDown()
 		{
