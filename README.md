@@ -3,7 +3,7 @@ An performant code focused strongly typed publisher/subscriber event system. Sup
 
 Custom event system can be created for more control if the supplied ones aren't sufficient.
 
-####Obtain!####
+#### Obtain! ####
 [Releases](https://github.com/GalvanicGames/unity-events/releases)
 
 If you'd like the most up to date version (which is the most cool), then pull the repo or download it [here](https://github.com/GalvanicGames/unity-events/archive/master.zip) and copy the files in Assets to your project's Assets folder.
