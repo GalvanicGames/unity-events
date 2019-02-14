@@ -6,7 +6,8 @@ using UnityEventsInternal;
 namespace UnityEvents
 {
 	/// <summary>
-	/// Holds a collection of event system that can handle all events.
+	/// The event system that handles subscribers for all events, can queue all events, and will process the events
+	/// when told to.
 	/// </summary>
 	public class UnityEventSystem : IDisposable
 	{
@@ -133,6 +134,9 @@ namespace UnityEvents
 			}
 		}
 
+		/// <summary>
+		/// Verify there are no subscribers. Logs instead of throwing an exception.
+		/// </summary>
 		public void VerifyNoSubscribersLog()
 		{
 			int count = _systems.Count;
