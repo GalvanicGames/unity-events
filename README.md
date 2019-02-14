@@ -1,5 +1,5 @@
 # Unity Events 2.0 #
-A performant code focused strongly typed publisher/subscriber event system. Supports global event system and per GameObject event systems that send deferred events to be processed at a later tick (FixedUpdate, Update, or LateUpdate). Allows regular callback events and multithreaded jobs that trigger on events.
+A performant code focused strongly typed publisher/subscriber event system to decouple objects from talking directly to each other. Supports global event system and per GameObject event systems that send deferred events to be processed at a later tick (FixedUpdate, Update, or LateUpdate). Allows regular callback events and multithreaded jobs that trigger on events.
 
 Custom Event Systems can be created to control when events are processed instead of relying on the update ticks.
 
