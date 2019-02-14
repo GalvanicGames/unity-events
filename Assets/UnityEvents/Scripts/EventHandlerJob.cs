@@ -14,7 +14,7 @@ namespace UnityEvents
 	/// </summary>
 	/// <typeparam name="T_Job">The job the system is responsible for.</typeparam>
 	/// <typeparam name="T_Event">The event the system is responsible for.</typeparam>
-	public class UnityEventJobSystem<T_Job, T_Event> :
+	public class EventHandlerJob<T_Job, T_Event> :
 		IJobEventSystem<T_Event>,
 		IDisposable
 		where T_Job : struct, IJobForEvent<T_Event>
@@ -59,7 +59,7 @@ namespace UnityEvents
 			}
 		}
 
-		public UnityEventJobSystem() : this(
+		public EventHandlerJob() : this(
 			DEFAULT_SUBSCRIBER_CAPACITY,
 			DEFAULT_EVENTS_TO_PROCESS_CAPACITY,
 			DEFAULT_PARALLEL_BATCH_COUNT)
@@ -72,7 +72,7 @@ namespace UnityEvents
 		/// <param name="subscriberStartingCapacity">The starting capacity of subscriber containers.</param>
 		/// <param name="queuedEventsStartingCapacity">The starting capacity of queued events containers.</param>
 		/// <param name="parallelBatchCount">The batch count allowed per thread for parallel processing.</param>
-		public UnityEventJobSystem(
+		public EventHandlerJob(
 			int subscriberStartingCapacity,
 			int queuedEventsStartingCapacity,
 			int parallelBatchCount)

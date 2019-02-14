@@ -8,6 +8,17 @@ namespace UnityEvents.Example
 	/// </summary>
 	public class ExampleSimpleJob : MonoBehaviour
 	{
+		// I have to be an unmanaged type! Need references? Use an id and have a lookup database system.
+		private struct EvExampleEvent
+		{
+			public int exampleValue;
+
+			public EvExampleEvent(int exampleValue)
+			{
+				this.exampleValue = exampleValue;
+			}
+		}
+
 		private struct ExampleJob : IJobForEvent<EvExampleEvent>
 		{
 			// This result is stored across jobs, wipe it out at the beginning of each job if this isn't wanted!

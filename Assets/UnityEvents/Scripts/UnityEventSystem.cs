@@ -8,7 +8,7 @@ namespace UnityEvents
 	/// <summary>
 	/// Holds a collection of event system that can handle all events.
 	/// </summary>
-	public class UnityEventSystems : IDisposable
+	public class UnityEventSystem : IDisposable
 	{
 		private List<IEventSystem> _systems = new List<IEventSystem>();
 		private Dictionary<Type, IEventSystem> _systemsCache = new Dictionary<Type, IEventSystem>();
@@ -25,7 +25,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event</typeparam>
 		public void Subscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback) where T_Event : unmanaged
 		{
-			UnityEventStandardSystem<T_Event> system = GetSystem<T_Event>();
+			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.Subscribe(entity, eventCallback);
 		}
 
@@ -41,8 +41,8 @@ namespace UnityEvents
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			UnityEventJobSystem<T_Job, T_Event> system = GetJobSystem<T_Job, T_Event>();
-			system.Subscribe(entity, job, onComplete);
+			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
+			handler.Subscribe(entity, job, onComplete);
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event</typeparam>
 		public void Unsubscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback) where T_Event : unmanaged
 		{
-			UnityEventStandardSystem<T_Event> system = GetSystem<T_Event>();
+			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.Unsubscribe(entity, eventCallback);
 		}
 
@@ -68,8 +68,8 @@ namespace UnityEvents
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			UnityEventJobSystem<T_Job, T_Event> system = GetJobSystem<T_Job, T_Event>();
-			system.Unsubscribe(entity, onComplete);
+			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
+			handler.Unsubscribe(entity, onComplete);
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void QueueEvent<T_Event>(EventEntity entity, T_Event ev) where T_Event : unmanaged
 		{
-			UnityEventStandardSystem<T_Event> system = GetSystem<T_Event>();
+			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.QueueEvent(entity, ev);
 
 			List<IEventSystem> list = GetJobSystemsForEvent<T_Event>();
@@ -167,21 +167,21 @@ namespace UnityEvents
 			}
 		}
 
-		private UnityEventStandardSystem<T_Event> GetSystem<T_Event>() where T_Event : unmanaged
+		private EventHandlerStandard<T_Event> GetSystem<T_Event>() where T_Event : unmanaged
 		{
 			IEventSystem system;
 
 			if (!_systemsCache.TryGetValue(typeof(T_Event), out system))
 			{
-				system = new UnityEventStandardSystem<T_Event>();
+				system = new EventHandlerStandard<T_Event>();
 				_systems.Add(system);
 				_systemsCache[typeof(T_Event)] = system;
 			}
 
-			return (UnityEventStandardSystem<T_Event>) system;
+			return (EventHandlerStandard<T_Event>) system;
 		}
 
-		private UnityEventJobSystem<T_Job, T_Event> GetJobSystem<T_Job, T_Event>()
+		private EventHandlerJob<T_Job, T_Event> GetJobSystem<T_Job, T_Event>()
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
@@ -189,12 +189,12 @@ namespace UnityEvents
 
 			if (!_jobSystemsCache.TryGetValue(typeof(T_Job), out system))
 			{
-				system = new UnityEventJobSystem<T_Job, T_Event>();
+				system = new EventHandlerJob<T_Job, T_Event>();
 				_systems.Add(system);
 				_jobSystemsCache[typeof(T_Job)] = system;
 			}
 
-			return (UnityEventJobSystem<T_Job, T_Event>) system;
+			return (EventHandlerJob<T_Job, T_Event>) system;
 		}
 
 		private List<IEventSystem> GetJobSystemsForEvent<T_Event>() where T_Event : unmanaged

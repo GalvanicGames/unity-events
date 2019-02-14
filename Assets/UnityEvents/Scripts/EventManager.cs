@@ -10,31 +10,31 @@ namespace UnityEvents
 	/// </summary>
 	public class EventManager : MonoBehaviour
 	{
-		private static readonly UnityEventSystems _fixedUpdateSystems = new UnityEventSystems();
-		private static readonly UnityEventSystems _updateSystems = new UnityEventSystems();
-		private static readonly UnityEventSystems _lateUpdateSystems = new UnityEventSystems();
+		private static readonly UnityEventSystem _fixedUpdateSystem = new UnityEventSystem();
+		private static readonly UnityEventSystem _updateSystem = new UnityEventSystem();
+		private static readonly UnityEventSystem _lateUpdateSystem = new UnityEventSystem();
 
 		/// <summary>
 		/// Subscribe a listener to an event in the specific update tick.
 		/// </summary>
 		/// <param name="entity">The entity to subscribe to.</param>
 		/// <param name="eventCallback">The event callback</param>
-		/// <param name="type">The update type to subscribe to.</param>
+		/// <param name="tick">The update type to subscribe to.</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public static void Subscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback, EventUpdateType type)
+		public static void Subscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback, EventUpdateTick tick)
 			where T_Event : unmanaged
 		{
-			if (type == EventUpdateType.FixedUpdate)
+			if (tick == EventUpdateTick.FixedUpdate)
 			{
-				_fixedUpdateSystems.Subscribe(entity, eventCallback);
+				_fixedUpdateSystem.Subscribe(entity, eventCallback);
 			}
-			else if (type == EventUpdateType.Update)
+			else if (tick == EventUpdateTick.Update)
 			{
-				_updateSystems.Subscribe(entity, eventCallback);
+				_updateSystem.Subscribe(entity, eventCallback);
 			}
 			else // Late Update
 			{
-				_lateUpdateSystems.Subscribe(entity, eventCallback);
+				_lateUpdateSystem.Subscribe(entity, eventCallback);
 			}
 		}
 
@@ -44,25 +44,28 @@ namespace UnityEvents
 		/// <param name="entity">The entity to subscribe to.</param>
 		/// <param name="job">The job, and starting data, to run when the event fires.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
-		/// <param name="type">The update type to subscribe to.</param>
+		/// <param name="tick">The update type to subscribe to.</param>
 		/// <typeparam name="T_Job">The event type.</typeparam>
 		/// <typeparam name="T_Event">The job type.</typeparam>
-		public static void SubscribeWithJob<T_Job, T_Event>(EventEntity entity, T_Job job, Action<T_Job> onComplete,
-			EventUpdateType type)
+		public static void SubscribeWithJob<T_Job, T_Event>(
+			EventEntity entity, 
+			T_Job job, 
+			Action<T_Job> onComplete,
+			EventUpdateTick tick)
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			if (type == EventUpdateType.FixedUpdate)
+			if (tick == EventUpdateTick.FixedUpdate)
 			{
-				_fixedUpdateSystems.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
+				_fixedUpdateSystem.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
 			}
-			else if (type == EventUpdateType.Update)
+			else if (tick == EventUpdateTick.Update)
 			{
-				_updateSystems.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
+				_updateSystem.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
 			}
 			else // Late Update
 			{
-				_lateUpdateSystems.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
+				_lateUpdateSystem.SubscribeWithJob<T_Job, T_Event>(entity, job, onComplete);
 			}
 		}
 
@@ -71,22 +74,22 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="entity">The entity to unsubscribe from.</param>
 		/// <param name="eventCallback">The event callback</param>
-		/// <param name="type">The update type to unsubscribe to.</param>
+		/// <param name="tick">The update type to unsubscribe to.</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public static void Unsubscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback, EventUpdateType type)
+		public static void Unsubscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback, EventUpdateTick tick)
 			where T_Event : unmanaged
 		{
-			if (type == EventUpdateType.FixedUpdate)
+			if (tick == EventUpdateTick.FixedUpdate)
 			{
-				_fixedUpdateSystems.Unsubscribe(entity, eventCallback);
+				_fixedUpdateSystem.Unsubscribe(entity, eventCallback);
 			}
-			else if (type == EventUpdateType.Update)
+			else if (tick == EventUpdateTick.Update)
 			{
-				_updateSystems.Unsubscribe(entity, eventCallback);
+				_updateSystem.Unsubscribe(entity, eventCallback);
 			}
 			else // Late Update
 			{
-				_lateUpdateSystems.Unsubscribe(entity, eventCallback);
+				_lateUpdateSystem.Unsubscribe(entity, eventCallback);
 			}
 		}
 
@@ -95,25 +98,25 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="entity">The entity to unsubscribe from.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
-		/// <param name="type">The update type to unsubscribe to.</param>
+		/// <param name="tick">The update type to unsubscribe to.</param>
 		/// <typeparam name="T_Job">The job type.</typeparam>
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void UnsubscribeWithJob<T_Job, T_Event>(EventEntity entity, Action<T_Job> onComplete,
-			EventUpdateType type)
+			EventUpdateTick tick)
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			if (type == EventUpdateType.FixedUpdate)
+			if (tick == EventUpdateTick.FixedUpdate)
 			{
-				_fixedUpdateSystems.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
+				_fixedUpdateSystem.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
 			}
-			else if (type == EventUpdateType.Update)
+			else if (tick == EventUpdateTick.Update)
 			{
-				_updateSystems.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
+				_updateSystem.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
 			}
 			else // Late Update
 			{
-				_lateUpdateSystems.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
+				_lateUpdateSystem.UnsubscribeWithJob<T_Job, T_Event>(entity, onComplete);
 			}
 		}
 
@@ -122,22 +125,22 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="entity">The entity to send the event to.</param>
 		/// <param name="ev">The event to send</param>
-		/// <param name="type">The update tick to send to.</param>
+		/// <param name="tick">The update tick to send to.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void SendEvent<T_Event>(EventEntity entity, T_Event ev, EventUpdateType type)
+		public static void SendEvent<T_Event>(EventEntity entity, T_Event ev, EventUpdateTick tick)
 			where T_Event : unmanaged
 		{
-			if (type == EventUpdateType.FixedUpdate)
+			if (tick == EventUpdateTick.FixedUpdate)
 			{
-				_fixedUpdateSystems.QueueEvent(entity, ev);
+				_fixedUpdateSystem.QueueEvent(entity, ev);
 			}
-			else if (type == EventUpdateType.Update)
+			else if (tick == EventUpdateTick.Update)
 			{
-				_updateSystems.QueueEvent(entity, ev);
+				_updateSystem.QueueEvent(entity, ev);
 			}
 			else // Late Update
 			{
-				_lateUpdateSystems.QueueEvent(entity, ev);
+				_lateUpdateSystem.QueueEvent(entity, ev);
 			}
 		}
 
@@ -146,9 +149,9 @@ namespace UnityEvents
 		/// </summary>
 		public static void FlushAll()
 		{
-			_fixedUpdateSystems.ProcessEvents();
-			_updateSystems.ProcessEvents();
-			_lateUpdateSystems.ProcessEvents();
+			_fixedUpdateSystem.ProcessEvents();
+			_updateSystem.ProcessEvents();
+			_lateUpdateSystem.ProcessEvents();
 		}
 
 		/// <summary>
@@ -156,9 +159,9 @@ namespace UnityEvents
 		/// </summary>
 		public static void ResetAll()
 		{
-			_fixedUpdateSystems.Reset();
-			_updateSystems.Reset();
-			_lateUpdateSystems.Reset();
+			_fixedUpdateSystem.Reset();
+			_updateSystem.Reset();
+			_lateUpdateSystem.Reset();
 		}
 
 		/// <summary>
@@ -166,9 +169,9 @@ namespace UnityEvents
 		/// </summary>
 		public static void VerifyNoSubscribersAll()
 		{
-			_fixedUpdateSystems.VerifyNoSubscribers();
-			_updateSystems.VerifyNoSubscribers();
-			_lateUpdateSystems.VerifyNoSubscribers();
+			_fixedUpdateSystem.VerifyNoSubscribers();
+			_updateSystem.VerifyNoSubscribers();
+			_lateUpdateSystem.VerifyNoSubscribers();
 		}
 
 		/// <summary>
@@ -177,33 +180,33 @@ namespace UnityEvents
 		/// </summary>
 		public static void VerifyNoSubscribersAllLog()
 		{
-			_fixedUpdateSystems.VerifyNoSubscribersLog();
-			_updateSystems.VerifyNoSubscribersLog();
-			_lateUpdateSystems.VerifyNoSubscribersLog();
+			_fixedUpdateSystem.VerifyNoSubscribersLog();
+			_updateSystem.VerifyNoSubscribersLog();
+			_lateUpdateSystem.VerifyNoSubscribersLog();
 		}
 
 		private void FixedUpdate()
 		{
-			_fixedUpdateSystems.ProcessEvents();
+			_fixedUpdateSystem.ProcessEvents();
 		}
 
 		private void Update()
 		{
-			_updateSystems.ProcessEvents();
+			_updateSystem.ProcessEvents();
 		}
 
 		private void LateUpdate()
 		{
-			_lateUpdateSystems.ProcessEvents();
+			_lateUpdateSystem.ProcessEvents();
 		}
 
 		private void OnDestroy()
 		{
 			ResetAll();
 
-			_fixedUpdateSystems.Dispose();
-			_updateSystems.Dispose();
-			_lateUpdateSystems.Dispose();
+			_fixedUpdateSystem.Dispose();
+			_updateSystem.Dispose();
+			_lateUpdateSystem.Dispose();
 		}
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -214,7 +217,7 @@ namespace UnityEvents
 		}
 	}
 	
-	public enum EventUpdateType
+	public enum EventUpdateTick
 	{
 		FixedUpdate,
 		Update,

@@ -8,6 +8,17 @@ namespace UnityEvents.Example
 	/// </summary>
 	public class ExampleSimple : MonoBehaviour
 	{
+		// I have to be an unmanaged type! Need references? Use an id and have a lookup database system.
+		private struct EvExampleEvent
+		{
+			public int exampleValue;
+
+			public EvExampleEvent(int exampleValue)
+			{
+				this.exampleValue = exampleValue;
+			}
+		}
+
 		private void OnEnable()
 		{
 			// Subscribes to the global event system, handles events in FixedUpdate
@@ -18,7 +29,7 @@ namespace UnityEvents.Example
 			
 			// Is the game paused but still need events for UI? There's a global UI system. Handles events in
 			// LateUpdate
-			GlobalUIEventSystem.Subscribe<EvExampleEvent>(OnExampleEvent);
+			GlobalEventSystem.SubscribeUI<EvExampleEvent>(OnExampleEvent);
 			
 			// There's also local event system for each GameObject that run in LateUpdate.
 			gameObject.SubscribeUI<EvExampleEvent>(OnExampleEvent);
@@ -32,7 +43,7 @@ namespace UnityEvents.Example
 			GlobalEventSystem.Unsubscribe<EvExampleEvent>(OnExampleEvent);
 			gameObject.Unsubscribe<EvExampleEvent>(OnExampleEvent);
 
-			GlobalUIEventSystem.Unsubscribe<EvExampleEvent>(OnExampleEvent);
+			GlobalEventSystem.UnsubscribeUI<EvExampleEvent>(OnExampleEvent);
 			gameObject.UnsubscribeUI<EvExampleEvent>(OnExampleEvent);
 		}
 
@@ -47,7 +58,7 @@ namespace UnityEvents.Example
 			
 			// Can send events to the global UI event system. These will be processed in LateUpdate which allows the
 			// game to paused.
-			GlobalUIEventSystem.SendEvent(new EvExampleEvent(-1));
+			GlobalEventSystem.SendEventUI(new EvExampleEvent(-1));
 			
 			// Similarly can send to a specific GameObject to be processed in LateUpdate
 			gameObject.SendEventUI(new EvExampleEvent(999999));
@@ -56,17 +67,6 @@ namespace UnityEvents.Example
 		private void OnExampleEvent(EvExampleEvent ev)
 		{
 			Debug.Log("Event received! Value: " + ev.exampleValue);
-		}
-	}
-
-	// I have to be an unmanaged type! Need references? Use an id and have a lookup database system.
-	public struct EvExampleEvent
-	{
-		public int exampleValue;
-
-		public EvExampleEvent(int exampleValue)
-		{
-			this.exampleValue = exampleValue;
 		}
 	}
 }

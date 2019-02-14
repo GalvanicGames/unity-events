@@ -12,7 +12,7 @@ namespace UnityEvents
 	/// Event system that processes regular events.
 	/// </summary>
 	/// <typeparam name="T_Event">The event the system is responsible for.</typeparam>
-	public class UnityEventStandardSystem<T_Event> : IEventSystem, IDisposable where T_Event : unmanaged
+	public class EventHandlerStandard<T_Event> : IEventSystem, IDisposable where T_Event : unmanaged
 	{
 		private NativeList<QueuedEvent<T_Event>> _queuedEvents;
 		private NativeList<EventEntity> _subscribers;
@@ -28,7 +28,7 @@ namespace UnityEvents
 		private const int DEFAULT_SUBSCRIBER_CAPACITY = 100;
 		private const int DEFAULT_PARALLEL_BATCH_COUNT = 32;
 
-		public UnityEventStandardSystem() : this(
+		public EventHandlerStandard() : this(
 			DEFAULT_SUBSCRIBER_CAPACITY,
 			DEFAULT_EVENTS_TO_PROCESS_CAPACITY,
 			DEFAULT_PARALLEL_BATCH_COUNT)
@@ -41,7 +41,7 @@ namespace UnityEvents
 		/// <param name="subscriberStartingCapacity">The starting capacity of subscriber containers.</param>
 		/// <param name="queuedEventsStartingCapacity">The starting capacity of queued events containers.</param>
 		/// <param name="parallelBatchCount">The batch count allowed per thread for parallel processing.</param>
-		public UnityEventStandardSystem(
+		public EventHandlerStandard(
 			int subscriberStartingCapacity,
 			int queuedEventsStartingCapacity,
 			int parallelBatchCount)

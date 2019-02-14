@@ -6,12 +6,12 @@ namespace UnityEvents.Test
 {
 	public class TestUnityEventStandardSystem
 	{
-		private UnityEventStandardSystem<EvSimpleEvent> _system;
+		private EventHandlerStandard<EvSimpleEvent> _system;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_system = new UnityEventStandardSystem<EvSimpleEvent>();
+			_system = new EventHandlerStandard<EvSimpleEvent>();
 		}
 
 		[TearDown]
