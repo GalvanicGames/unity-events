@@ -13,6 +13,16 @@ If you'd like the most up to date version (which is the most cool), then pull th
 ## Setup
 Once the Unity Events asset has been imported into the project then the event system is ready to be used.
 
+### Prerequisites ###
+Requires the following Unity packages:
+Jobs
+Mathematics
+Collections
+Burst
+
+Also requires:
+4.x .NET Runtime (Default in 2018.3)
+
 ## Examples
 There are multiple [simple](Assets/UnityEvents/Examples/Simple) and [advanced](Assets/UnityEvents/Examples/Advance) examples in the repository and can be looked at for guidance.
 
