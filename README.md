@@ -14,7 +14,7 @@ If you'd like the most up to date version (which is the most cool), then pull th
 Once the Unity Events asset has been imported into the project then the event system is ready to be used.
 
 ## Examples
-There are multiple [simple]() and [advanced]() examples in the repository and can be looked at for guidance.
+There are multiple [simple](Assets/UnityEvents/Examples/Simple) and [advanced](Assets/UnityEvents/Examples/Advance) examples in the repository and can be looked at for guidance.
 
 As a simple example here is how an event can be sent to a Global event system and a GameObject's local event system.
 ```csharp
