@@ -200,5 +200,24 @@ namespace UnityEvents.Test
 			Assert.IsTrue(value == 20);
 		}
 
+		[UnityTest]
+		public IEnumerator TestFlush()
+		{
+			EventEntity entity = EventEntity.CreateEntity();
+			
+			int value = 0;
+			Action<EvSimpleEvent> callback = x => { value += x.value; };
+			
+			EventManager.Subscribe(entity, callback, EventUpdateType.Update);
+
+			EventManager.SendEvent(entity, new EvSimpleEvent(10), EventUpdateType.Update);
+			
+			EventManager.FlushAll();
+			Assert.IsTrue(value == 10);
+			
+			yield return null;
+			
+			Assert.IsTrue(value == 10);
+		}
 	}
 }

@@ -142,6 +142,16 @@ namespace UnityEvents
 		}
 
 		/// <summary>
+		/// Flushes all currently queued events NOW
+		/// </summary>
+		public static void FlushAll()
+		{
+			_fixedUpdateSystems.ProcessEvents();
+			_updateSystems.ProcessEvents();
+			_lateUpdateSystems.ProcessEvents();
+		}
+
+		/// <summary>
 		/// Reset all the event systems with all update types.
 		/// </summary>
 		public static void ResetAll()
