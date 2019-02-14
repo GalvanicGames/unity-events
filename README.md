@@ -24,7 +24,7 @@ Burst
 
 Also requires:
 ```
-4.x .NET Runtime (Default in 2018.3)
+.NET 4.x Runtime (Default in 2018.3)
 ```
 
 ## Examples
