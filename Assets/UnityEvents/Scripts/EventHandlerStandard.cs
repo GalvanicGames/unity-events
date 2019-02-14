@@ -15,7 +15,7 @@ namespace UnityEvents
 	public class EventHandlerStandard<T_Event> : IEventSystem, IDisposable where T_Event : unmanaged
 	{
 		private NativeList<QueuedEvent<T_Event>> _queuedEvents;
-		private NativeList<EventEntity> _subscribers;
+		private NativeList<EventTarget> _subscribers;
 
 		private List<Action<T_Event>> _subscriberCallbacks;
 		private Dictionary<EntityCallbackId<T_Event>, int> _entityCallbackToIndex;
@@ -48,7 +48,7 @@ namespace UnityEvents
 		{
 			_batchCount = parallelBatchCount;
 
-			_subscribers = new NativeList<EventEntity>(subscriberStartingCapacity, Allocator.Persistent);
+			_subscribers = new NativeList<EventTarget>(subscriberStartingCapacity, Allocator.Persistent);
 			_subscriberCallbacks = new List<Action<T_Event>>(subscriberStartingCapacity);
 			_entityCallbackToIndex = new Dictionary<EntityCallbackId<T_Event>, int>(subscriberStartingCapacity);
 
@@ -74,30 +74,30 @@ namespace UnityEvents
 		/// <summary>
 		/// Subscribe a listener to the system.
 		/// </summary>
-		/// <param name="entity">The entity to subscribe to.</param>
+		/// <param name="target">The target to subscribe to.</param>
 		/// <param name="callback">The callback that is invoked when an event fires.</param>
-		public void Subscribe(EventEntity entity, Action<T_Event> callback)
+		public void Subscribe(EventTarget target, Action<T_Event> callback)
 		{
 #if !DISABLE_EVENT_SAFETY_CHKS
-			if (_entityCallbackToIndex.ContainsKey(new EntityCallbackId<T_Event>(entity, callback)))
+			if (_entityCallbackToIndex.ContainsKey(new EntityCallbackId<T_Event>(target, callback)))
 			{
 				throw new MultipleSubscriptionsException<T_Event>(callback);
 			}
 #endif
 
-			_entityCallbackToIndex.Add(new EntityCallbackId<T_Event>(entity, callback), _subscribers.Length);
-			_subscribers.Add(entity);
+			_entityCallbackToIndex.Add(new EntityCallbackId<T_Event>(target, callback), _subscribers.Length);
+			_subscribers.Add(target);
 			_subscriberCallbacks.Add(callback);
 		}
 
 		/// <summary>
 		/// Unsubscribe a listener from the system.
 		/// </summary>
-		/// <param name="entity">The entity to unsubscribe from.</param>
+		/// <param name="target">The target to unsubscribe from.</param>
 		/// <param name="callback">The callback that was invoked during events.</param>
-		public void Unsubscribe(EventEntity entity, Action<T_Event> callback)
+		public void Unsubscribe(EventTarget target, Action<T_Event> callback)
 		{
-			EntityCallbackId<T_Event> callbackId = new EntityCallbackId<T_Event>(entity, callback);
+			EntityCallbackId<T_Event> callbackId = new EntityCallbackId<T_Event>(target, callback);
 
 			if (_entityCallbackToIndex.TryGetValue(callbackId, out int index))
 			{
@@ -122,11 +122,11 @@ namespace UnityEvents
 		/// <summary>
 		/// Queue an event to be processed later.
 		/// </summary>
-		/// <param name="entity">The entity the event is for.</param>
+		/// <param name="target">The target the event is for.</param>
 		/// <param name="ev">The event to queue.</param>
-		public void QueueEvent(EventEntity entity, T_Event ev)
+		public void QueueEvent(EventTarget target, T_Event ev)
 		{
-			_queuedEvents.Add(new QueuedEvent<T_Event>(entity, ev));
+			_queuedEvents.Add(new QueuedEvent<T_Event>(target, ev));
 		}
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace UnityEvents
 			public NativeList<QueuedEvent<T_Event>> queuedEvents;
 
 			[ReadOnly]
-			public NativeList<EventEntity> subscribers;
+			public NativeList<EventTarget> subscribers;
 
 			public NativeQueue<UnityEvent<T_Event>>.Concurrent eventsToProcess;
 
@@ -207,7 +207,7 @@ namespace UnityEvents
 
 				for (int i = 0; i < count; i++)
 				{
-					if (subscribers[i].Equals(ev.entity))
+					if (subscribers[i].Equals(ev.target))
 					{
 						eventsToProcess.Enqueue(new UnityEvent<T_Event>(ev.ev, i));
 					}

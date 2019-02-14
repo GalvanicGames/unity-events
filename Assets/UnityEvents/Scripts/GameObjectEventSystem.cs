@@ -8,7 +8,7 @@ namespace UnityEventsInternal
 	{
 		public static void Subscribe<T_Event>(this GameObject gObj, Action<T_Event> callback) where T_Event : unmanaged
 		{
-			EventManager.Subscribe(EventEntity.CreateEntity(gObj), callback, EventUpdateTick.FixedUpdate);
+			EventManager.Subscribe(EventTarget.CreateTarget(gObj), callback, EventUpdateTick.FixedUpdate);
 		}
 
 		public static void SubscribeWithJob<T_Job, T_Event>(this GameObject gObj, T_Job job, Action<T_Job> onComplete)
@@ -16,7 +16,7 @@ namespace UnityEventsInternal
 			where T_Event : unmanaged
 		{
 			EventManager.SubscribeWithJob<T_Job, T_Event>(
-				EventEntity.CreateEntity(gObj),
+				EventTarget.CreateTarget(gObj),
 				job,
 				onComplete,
 				EventUpdateTick.FixedUpdate);
@@ -25,7 +25,7 @@ namespace UnityEventsInternal
 		public static void Unsubscribe<T_Event>(this GameObject gObj, Action<T_Event> callback)
 			where T_Event : unmanaged
 		{
-			EventManager.Unsubscribe(EventEntity.CreateEntity(gObj), callback, EventUpdateTick.FixedUpdate);
+			EventManager.Unsubscribe(EventTarget.CreateTarget(gObj), callback, EventUpdateTick.FixedUpdate);
 		}
 
 		public static void UnsubscribeWithJob<T_Job, T_Event>(this GameObject gObj, Action<T_Job> onComplete)
@@ -33,20 +33,20 @@ namespace UnityEventsInternal
 			where T_Event : unmanaged
 		{
 			EventManager.UnsubscribeWithJob<T_Job, T_Event>(
-				EventEntity.CreateEntity(gObj),
+				EventTarget.CreateTarget(gObj),
 				onComplete,
 				EventUpdateTick.FixedUpdate);
 		}
 
 		public static void SendEvent<T_Event>(this GameObject gObj, T_Event ev) where T_Event : unmanaged
 		{
-			EventManager.SendEvent(EventEntity.CreateEntity(gObj), ev, EventUpdateTick.FixedUpdate);
+			EventManager.SendEvent(EventTarget.CreateTarget(gObj), ev, EventUpdateTick.FixedUpdate);
 		}
 
 		public static void SubscribeUI<T_Event>(this GameObject gObj, Action<T_Event> callback)
 			where T_Event : unmanaged
 		{
-			EventManager.Subscribe(EventEntity.CreateEntity(gObj), callback, EventUpdateTick.LateUpdate);
+			EventManager.Subscribe(EventTarget.CreateTarget(gObj), callback, EventUpdateTick.LateUpdate);
 		}
 
 		public static void SubscribeUIWithJob<T_Job, T_Event>(this GameObject gObj, T_Job job, Action<T_Job> onComplete)
@@ -54,7 +54,7 @@ namespace UnityEventsInternal
 			where T_Event : unmanaged
 		{
 			EventManager.SubscribeWithJob<T_Job, T_Event>(
-				EventEntity.CreateEntity(gObj),
+				EventTarget.CreateTarget(gObj),
 				job,
 				onComplete,
 				EventUpdateTick.LateUpdate);
@@ -64,7 +64,7 @@ namespace UnityEventsInternal
 			where T_Event : unmanaged
 		{
 			EventManager.Unsubscribe(
-				EventEntity.CreateEntity(gObj),
+				EventTarget.CreateTarget(gObj),
 				callback,
 				EventUpdateTick.LateUpdate);
 		}
@@ -74,14 +74,14 @@ namespace UnityEventsInternal
 			where T_Event : unmanaged
 		{
 			EventManager.UnsubscribeWithJob<T_Job, T_Event>(
-				EventEntity.CreateEntity(gObj),
+				EventTarget.CreateTarget(gObj),
 				onComplete,
 				EventUpdateTick.LateUpdate);
 		}
 
 		public static void SendEventUI<T_Event>(this GameObject gObj, T_Event ev) where T_Event : unmanaged
 		{
-			EventManager.SendEvent(EventEntity.CreateEntity(gObj), ev, EventUpdateTick.LateUpdate);
+			EventManager.SendEvent(EventTarget.CreateTarget(gObj), ev, EventUpdateTick.LateUpdate);
 		}
 	}
 }

@@ -40,23 +40,23 @@ namespace UnityEvents.Example
 			// to be used directly and TickEventSystem and UnityEventSystem would be sufficient in most cases.
 			
 			// See ExampleControlledEventSystem.cs for a description on EventEntities.
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			// Subscribe, Unsubscribe, and Events will seem familiar but can ONLY use EvExampleEvent. Doesn't work for
 			// all events.
-			_standardHandler.Subscribe(entity, OnExampleEvent);
+			_standardHandler.Subscribe(target, OnExampleEvent);
 			
 			// Handlers have to be told to process events so we queue an event and process it later.
-			_standardHandler.QueueEvent(entity, new EvExampleEvent(7777));
+			_standardHandler.QueueEvent(target, new EvExampleEvent(7777));
 			_standardHandler.ProcessEvents();
 			
-			_standardHandler.Unsubscribe(entity, OnExampleEvent);
+			_standardHandler.Unsubscribe(target, OnExampleEvent);
 			
 			// There's a job handler as well, they are separate and won't fire on the same events
-			_jobHandler.Subscribe(entity, new ExampleJob(), OnJobFinished);
-			_jobHandler.QueueEvent(entity, new EvExampleEvent(111));
+			_jobHandler.Subscribe(target, new ExampleJob(), OnJobFinished);
+			_jobHandler.QueueEvent(target, new EvExampleEvent(111));
 			_jobHandler.ProcessEvents();
-			_jobHandler.Unsubscribe(entity, OnJobFinished);
+			_jobHandler.Unsubscribe(target, OnJobFinished);
 			
 		}
 		

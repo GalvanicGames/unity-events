@@ -18,14 +18,14 @@ namespace UnityEvents.Test
 		[UnityTest] 
 		public IEnumerator TestSimpleValue()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			int value = 0;
 			Action<EvSimpleEvent> callback = x => { value += x.value; };
 			
-			EventManager.Subscribe(entity, callback, EventUpdateTick.Update);
+			EventManager.Subscribe(target, callback, EventUpdateTick.Update);
 
-			EventManager.SendEvent(entity, new EvSimpleEvent(10), EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(10), EventUpdateTick.Update);
 			Assert.IsTrue(value == 0);
 			
 			yield return null;
@@ -36,12 +36,12 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestSimpleValueJob()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			Action<TestJob> callback = x => { Assert.IsTrue(x.result == 10); };
 			
-			EventManager.SubscribeWithJob<TestJob, EvSimpleEvent>(entity, new TestJob(), callback, EventUpdateTick.Update);
-			EventManager.SendEvent(entity, new EvSimpleEvent(10), EventUpdateTick.Update);
+			EventManager.SubscribeWithJob<TestJob, EvSimpleEvent>(target, new TestJob(), callback, EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(10), EventUpdateTick.Update);
 
 			yield return null;
 		}
@@ -49,7 +49,7 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestUpdateEvents()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			Action<EvSimpleEvent> updateCallback = x =>
 			{
@@ -69,13 +69,13 @@ namespace UnityEvents.Test
 				Assert.IsTrue(stacktrace.Contains("EventManager.LateUpdate ()"));
 			};
 			
-			EventManager.Subscribe(entity, updateCallback, EventUpdateTick.Update);
-			EventManager.Subscribe(entity, fixedUpdateCallback, EventUpdateTick.FixedUpdate);
-			EventManager.Subscribe(entity, lateUpdateCallback, EventUpdateTick.LateUpdate);
+			EventManager.Subscribe(target, updateCallback, EventUpdateTick.Update);
+			EventManager.Subscribe(target, fixedUpdateCallback, EventUpdateTick.FixedUpdate);
+			EventManager.Subscribe(target, lateUpdateCallback, EventUpdateTick.LateUpdate);
 			
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.Update);
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.FixedUpdate);
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.LateUpdate);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.FixedUpdate);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.LateUpdate);
 
 			yield return new WaitForFixedUpdate();
 			yield return null;
@@ -84,20 +84,20 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestUpdateMismatchEvent()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			int value = 0;
 			Action<EvSimpleEvent> callback = x => { value += 1; };
 			
-			EventManager.Subscribe(entity, callback, EventUpdateTick.Update);
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.LateUpdate);
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.FixedUpdate);
+			EventManager.Subscribe(target, callback, EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.LateUpdate);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.FixedUpdate);
 
 			yield return null;
 			
 			Assert.IsTrue(value == 0);
 			
-			EventManager.SendEvent(entity, new EvSimpleEvent(), EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(), EventUpdateTick.Update);
 
 			yield return null;
 			Assert.IsTrue(value == 1);
@@ -112,8 +112,8 @@ namespace UnityEvents.Test
 			Action<EvSimpleEvent> callback1 = x => { value1 += 1; };
 			Action<EvSimpleEvent> callback2 = x => { value2 += 1; };
 			
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 			
 			EventManager.Subscribe(entity1, callback1, EventUpdateTick.Update);
 			EventManager.Subscribe(entity2, callback2, EventUpdateTick.Update);
@@ -136,8 +136,8 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestMultipleEntitiesJob()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 			
 			Action<TestJob> callback1 = x => { Assert.IsTrue(x.result == 10); };
 			Action<TestJob> callback2 = x => { Assert.IsTrue(x.result == 20); };
@@ -158,15 +158,15 @@ namespace UnityEvents.Test
 		public IEnumerator TestStandardVsJob()
 		{
 			int value = 0;
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			Action<TestJob> callback1 = x => { Assert.IsTrue(x.result == 10); };
 			Action<EvSimpleEvent> callback2 = x => { value += x.value; };
 			
-			EventManager.SubscribeWithJob<TestJob, EvSimpleEvent>(entity, new TestJob(), callback1, EventUpdateTick.Update);
-			EventManager.Subscribe(entity, callback2, EventUpdateTick.Update);
+			EventManager.SubscribeWithJob<TestJob, EvSimpleEvent>(target, new TestJob(), callback1, EventUpdateTick.Update);
+			EventManager.Subscribe(target, callback2, EventUpdateTick.Update);
 			
-			EventManager.SendEvent(entity, new EvSimpleEvent(10), EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(10), EventUpdateTick.Update);
 
 			yield return null;
 			
@@ -176,8 +176,8 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestMultipleEntitiesStandardVsJob()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 
 			int value = 0;
 
@@ -203,14 +203,14 @@ namespace UnityEvents.Test
 		[UnityTest]
 		public IEnumerator TestFlush()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 			
 			int value = 0;
 			Action<EvSimpleEvent> callback = x => { value += x.value; };
 			
-			EventManager.Subscribe(entity, callback, EventUpdateTick.Update);
+			EventManager.Subscribe(target, callback, EventUpdateTick.Update);
 
-			EventManager.SendEvent(entity, new EvSimpleEvent(10), EventUpdateTick.Update);
+			EventManager.SendEvent(target, new EvSimpleEvent(10), EventUpdateTick.Update);
 			
 			EventManager.FlushAll();
 			Assert.IsTrue(value == 10);

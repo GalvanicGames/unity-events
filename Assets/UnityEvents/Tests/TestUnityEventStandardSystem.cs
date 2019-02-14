@@ -24,21 +24,21 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestSimpleEvent()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 
 			int value = 0;
 
 			Action<EvSimpleEvent> callback = x => value += x.value;
 
-			_system.Subscribe(entity, callback);
+			_system.Subscribe(target, callback);
 
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
 			_system.ProcessEvents();
 
-			_system.Unsubscribe(entity, callback);
+			_system.Unsubscribe(target, callback);
 			_system.VerifyNoSubscribers();
 
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value == 10);
@@ -47,8 +47,8 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestOtherUnsubscribe()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 
 			int value = 0;
 
@@ -69,8 +69,8 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMeUnsubscribe()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 
 			int value = 0;
 
@@ -91,24 +91,24 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMultipleEvents()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 
 			int value = 0;
 
 			Action<EvSimpleEvent> callback = x => value += x.value;
 
-			_system.Subscribe(entity, callback);
+			_system.Subscribe(target, callback);
 
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
 			_system.ProcessEvents();
 
-			_system.Unsubscribe(entity, callback);
+			_system.Unsubscribe(target, callback);
 			_system.VerifyNoSubscribers();
 
-			_system.QueueEvent(entity, new EvSimpleEvent(10));
+			_system.QueueEvent(target, new EvSimpleEvent(10));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value == 40);
@@ -117,8 +117,8 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMultipleEntities()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 
 			int value1 = 0;
 			int value2 = 0;
@@ -143,20 +143,20 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMultipleSubscribes()
 		{
-			EventEntity entity = EventEntity.CreateEntity();
+			EventTarget target = EventTarget.CreateTarget();
 
 			Action<EvSimpleEvent> callback = x => { };
 
-			_system.Subscribe(entity, callback);
+			_system.Subscribe(target, callback);
 
-			Assert.Throws<MultipleSubscriptionsException<EvSimpleEvent>>(() => _system.Subscribe(entity, callback));
+			Assert.Throws<MultipleSubscriptionsException<EvSimpleEvent>>(() => _system.Subscribe(target, callback));
 		}
 
 		[Test]
 		public void TestMultipleSubscribeUnsubscribesEvents()
 		{
-			EventEntity entity1 = EventEntity.CreateEntity();
-			EventEntity entity2 = EventEntity.CreateEntity();
+			EventTarget entity1 = EventTarget.CreateTarget();
+			EventTarget entity2 = EventTarget.CreateTarget();
 
 			int value1 = 0;
 			int value2 = 0;

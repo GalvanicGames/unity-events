@@ -21,68 +21,68 @@ namespace UnityEvents
 		/// <summary>
 		/// Subscribe a listener to an event.
 		/// </summary>
-		/// <param name="entity">The entity to subscribe to.</param>
+		/// <param name="target">The entity to subscribe to.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public void Subscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback) where T_Event : unmanaged
+		public void Subscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : unmanaged
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
-			system.Subscribe(entity, eventCallback);
+			system.Subscribe(target, eventCallback);
 		}
 
 		/// <summary>
 		/// Subscribe a job that processes during an event.
 		/// </summary>
-		/// <param name="entity">The entity to subscribe to.</param>
+		/// <param name="target">The entity to subscribe to.</param>
 		/// <param name="job">The job, and starting data, to run when the event fires.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
 		/// <typeparam name="T_Job">The event type.</typeparam>
 		/// <typeparam name="T_Event">The job type.</typeparam>
-		public void SubscribeWithJob<T_Job, T_Event>(EventEntity entity, T_Job job, Action<T_Job> onComplete)
+		public void SubscribeWithJob<T_Job, T_Event>(EventTarget target, T_Job job, Action<T_Job> onComplete)
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
 			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
-			handler.Subscribe(entity, job, onComplete);
+			handler.Subscribe(target, job, onComplete);
 		}
 
 		/// <summary>
 		/// Unsubscribe a listener from an event. 
 		/// </summary>
-		/// <param name="entity">The entity to unsubscribe from.</param>
+		/// <param name="target">The entity to unsubscribe from.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public void Unsubscribe<T_Event>(EventEntity entity, Action<T_Event> eventCallback) where T_Event : unmanaged
+		public void Unsubscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : unmanaged
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
-			system.Unsubscribe(entity, eventCallback);
+			system.Unsubscribe(target, eventCallback);
 		}
 
 		/// <summary>
 		/// Unsubscribe a job that processed during from an event.
 		/// </summary>
-		/// <param name="entity">The entity to unsubscribe from.</param>
+		/// <param name="target">The entity to unsubscribe from.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
 		/// <typeparam name="T_Job">The job type.</typeparam>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public void UnsubscribeWithJob<T_Job, T_Event>(EventEntity entity, Action<T_Job> onComplete)
+		public void UnsubscribeWithJob<T_Job, T_Event>(EventTarget target, Action<T_Job> onComplete)
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
 			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
-			handler.Unsubscribe(entity, onComplete);
+			handler.Unsubscribe(target, onComplete);
 		}
 
 		/// <summary>
 		/// Queue an event.
 		/// </summary>
-		/// <param name="entity">The entity to queue an event with.</param>
+		/// <param name="target">The entity to queue an event with.</param>
 		/// <param name="ev">The event to queue.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public void QueueEvent<T_Event>(EventEntity entity, T_Event ev) where T_Event : unmanaged
+		public void QueueEvent<T_Event>(EventTarget target, T_Event ev) where T_Event : unmanaged
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
-			system.QueueEvent(entity, ev);
+			system.QueueEvent(target, ev);
 
 			List<IEventSystem> list = GetJobSystemsForEvent<T_Event>();
 
@@ -91,7 +91,7 @@ namespace UnityEvents
 			for (int i = 0; i < count; i++)
 			{
 				IJobEventSystem<T_Event> typedSystem = (IJobEventSystem<T_Event>) list[i];
-				typedSystem.QueueEvent(entity, ev);
+				typedSystem.QueueEvent(target, ev);
 			}
 		}
 		

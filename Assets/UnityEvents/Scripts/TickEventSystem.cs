@@ -10,7 +10,7 @@ namespace UnityEvents
 	public class TickEventSystem
 	{
 		private EventUpdateTick _tick;
-		private EventEntity _entity;
+		private EventTarget _target;
 		
 		/// <summary>
 		/// Create an tick based event system.
@@ -19,7 +19,7 @@ namespace UnityEvents
 		public TickEventSystem(EventUpdateTick updateTick)
 		{
 			_tick = updateTick;
-			_entity = EventEntity.CreateEntity();
+			_target = EventTarget.CreateTarget();
 		}
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void Subscribe<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
 		{
-			EventManager.Subscribe(_entity, callback, _tick);
+			EventManager.Subscribe(_target, callback, _tick);
 		}
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace UnityEvents
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			EventManager.SubscribeWithJob<T_Job, T_Event>(_entity, job, onComplete, _tick);
+			EventManager.SubscribeWithJob<T_Job, T_Event>(_target, job, onComplete, _tick);
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void Unsubscribe<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
 		{
-			EventManager.Unsubscribe(_entity, callback, _tick);
+			EventManager.Unsubscribe(_target, callback, _tick);
 		}
 		
 		/// <summary>
@@ -66,7 +66,7 @@ namespace UnityEvents
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : unmanaged
 		{
-			EventManager.UnsubscribeWithJob<T_Job, T_Event>(_entity, onComplete, _tick);
+			EventManager.UnsubscribeWithJob<T_Job, T_Event>(_target, onComplete, _tick);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void SendEvent<T_Event>(T_Event ev) where T_Event : unmanaged
 		{
-			EventManager.SendEvent(_entity, ev, _tick);
+			EventManager.SendEvent(_target, ev, _tick);
 		}
 	}
 }

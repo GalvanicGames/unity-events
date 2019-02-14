@@ -49,12 +49,12 @@ namespace UnityEvents
 
 		private struct Subscription
 		{
-			public EventEntity entity;
+			public EventTarget target;
 			public T_Job job;
 
-			public Subscription(EventEntity entity, T_Job job)
+			public Subscription(EventTarget target, T_Job job)
 			{
-				this.entity = entity;
+				this.target = target;
 				this.job = job;
 			}
 		}
@@ -109,31 +109,31 @@ namespace UnityEvents
 		/// <summary>
 		/// Subscribe a job to the system.
 		/// </summary>
-		/// <param name="entity">The entity to subscribe to.</param>
+		/// <param name="target">The entity to subscribe to.</param>
 		/// <param name="job">The job, and initial job state, to process when an event fires.</param>
 		/// <param name="onComplete">The callback to invoke when a job finishes.</param>
-		public void Subscribe(EventEntity entity, T_Job job, Action<T_Job> onComplete)
+		public void Subscribe(EventTarget target, T_Job job, Action<T_Job> onComplete)
 		{
 #if !DISABLE_EVENT_SAFETY_CHKS
-			if (_entityCallbackToIndex.ContainsKey(new EntityCallbackId<T_Job>(entity, onComplete)))
+			if (_entityCallbackToIndex.ContainsKey(new EntityCallbackId<T_Job>(target, onComplete)))
 			{
 				throw new MultipleSubscriptionsException<T_Job>(onComplete);
 			}
 #endif
 
-			_entityCallbackToIndex.Add(new EntityCallbackId<T_Job>(entity, onComplete), _subscribers.Length);
-			_subscribers.Add(new Subscription(entity, job));
+			_entityCallbackToIndex.Add(new EntityCallbackId<T_Job>(target, onComplete), _subscribers.Length);
+			_subscribers.Add(new Subscription(target, job));
 			_subscriberCallbacks.Add(onComplete);
 		}
 
 		/// <summary>
 		/// Unsubscribe a job from the system.
 		/// </summary>
-		/// <param name="entity">The entity to unsubscribe from.</param>
+		/// <param name="target">The entity to unsubscribe from.</param>
 		/// <param name="onComplete">The callback that was invoked when a job finished.</param>
-		public void Unsubscribe(EventEntity entity, Action<T_Job> onComplete)
+		public void Unsubscribe(EventTarget target, Action<T_Job> onComplete)
 		{
-			EntityCallbackId<T_Job> callbackId = new EntityCallbackId<T_Job>(entity, onComplete);
+			EntityCallbackId<T_Job> callbackId = new EntityCallbackId<T_Job>(target, onComplete);
 
 			if (_entityCallbackToIndex.TryGetValue(callbackId, out int index))
 			{
@@ -147,7 +147,7 @@ namespace UnityEvents
 				if (index != _subscribers.Length)
 				{
 					EntityCallbackId<T_Job> otherCallbackId = new EntityCallbackId<T_Job>(
-						_subscribers[index].entity,
+						_subscribers[index].target,
 						_subscriberCallbacks[index]);
 
 					_entityCallbackToIndex[otherCallbackId] = index;
@@ -158,11 +158,11 @@ namespace UnityEvents
 		/// <summary>
 		/// Queue an event to be processed later.
 		/// </summary>
-		/// <param name="entity">The entity the event is for.</param>
+		/// <param name="target">The entity the event is for.</param>
 		/// <param name="ev">The event to queue.</param>
-		public void QueueEvent(EventEntity entity, T_Event ev)
+		public void QueueEvent(EventTarget target, T_Event ev)
 		{
-			QueuedEvent<T_Event> newEv = new QueuedEvent<T_Event>(entity, ev);
+			QueuedEvent<T_Event> newEv = new QueuedEvent<T_Event>(target, ev);
 
 #if !DISABLE_EVENT_SAFETY_CHKS
 			if (_cachedCurEvents.TryGetValue(newEv, out int index))
@@ -320,7 +320,7 @@ namespace UnityEvents
 
 				for (int i = 0; i < count; i++)
 				{
-					if (subscribers[i].entity.Equals(ev.entity))
+					if (subscribers[i].target.Equals(ev.target))
 					{
 						eventsToProcess.Enqueue(new UnityEventJob(ev.ev, i));
 					}

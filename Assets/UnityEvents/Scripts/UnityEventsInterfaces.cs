@@ -11,7 +11,7 @@ namespace UnityEventsInternal
 
 	public interface IJobEventSystem<T> : IEventSystem where T: unmanaged
 	{
-		void QueueEvent(EventEntity entity, T ev);
+		void QueueEvent(EventTarget target, T ev);
 	}
 
 	public interface IJobForEvent<T> where T : unmanaged

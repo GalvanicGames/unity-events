@@ -13,17 +13,17 @@ namespace UnityEvents.Test
 			int allBits = unchecked((int)0xffffffff);
 			
 			// This represents the range for gameobjects, should only be the first 32 bits of a ulong
-			EventEntity minEntity = new EventEntity(minId);
-			EventEntity maxEntity = new EventEntity(maxId);
-			EventEntity allBitsEntity = new EventEntity(allBits);
+			EventTarget minTarget = new EventTarget(minId);
+			EventTarget maxTarget = new EventTarget(maxId);
+			EventTarget allBitsTarget = new EventTarget(allBits);
 
 			ulong zeroedBits = 0xffffffff;
 			zeroedBits <<= 32;
 			
-			Assert.IsTrue((minEntity.id & zeroedBits) == 0);
-			Assert.IsTrue((maxEntity.id & zeroedBits) == 0);
-			Assert.IsTrue((allBitsEntity.id & zeroedBits) == 0);
-			Assert.IsTrue((EventEntity.CreateEntity().id & zeroedBits) != 0);
+			Assert.IsTrue((minTarget.id & zeroedBits) == 0);
+			Assert.IsTrue((maxTarget.id & zeroedBits) == 0);
+			Assert.IsTrue((allBitsTarget.id & zeroedBits) == 0);
+			Assert.IsTrue((EventTarget.CreateTarget().id & zeroedBits) != 0);
 		}
 	}
 }

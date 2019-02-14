@@ -3,42 +3,42 @@ using Object = UnityEngine.Object;
 
 namespace UnityEvents
 {
-	public struct EventEntity: IEquatable<EventEntity>
+	public struct EventTarget: IEquatable<EventTarget>
 	{
 		public readonly ulong id;
 
-		public static readonly EventEntity NULL_ENTITY = new EventEntity(NULL_ID);
+		public static readonly EventTarget NULL_TARGET = new EventTarget(NULL_ID);
 	
 		// We reserve the first uint.MaxValue values for GameObjects
 		private static ulong _ids = (ulong)uint.MaxValue + 1;
 		private const ulong NULL_ID = ulong.MaxValue;
 
-		public EventEntity(ulong id)
+		public EventTarget(ulong id)
 		{
 			this.id = id;
 		}
 
-		public EventEntity(int id) : this(unchecked((uint)id))
+		public EventTarget(int id) : this(unchecked((uint)id))
 		{
 			
 		}
 	
-		public static EventEntity CreateEntity()
+		public static EventTarget CreateTarget()
 		{
-			return new EventEntity(_ids++);
+			return new EventTarget(_ids++);
 		}
 
-		public static EventEntity CreateEntity(Object obj)
+		public static EventTarget CreateTarget(Object obj)
 		{
 			if (obj == null)
 			{
-				return NULL_ENTITY;
+				return NULL_TARGET;
 			}
 		
-			return new EventEntity(obj.GetInstanceID());
+			return new EventTarget(obj.GetInstanceID());
 		}
 
-		public bool Equals(EventEntity other)
+		public bool Equals(EventTarget other)
 		{
 			return id == other.id;
 		}
@@ -46,7 +46,7 @@ namespace UnityEvents
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
-			return obj is EventEntity other && Equals(other);
+			return obj is EventTarget other && Equals(other);
 		}
 
 		public override int GetHashCode()
