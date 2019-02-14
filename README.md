@@ -1,6 +1,6 @@
-# Unity Events
+# Unity Events 2.0
 =======================
-An efficient code focused typed event system with global and per GameObject event systems. Loosely couple components by using this event system to invoke functions who listen for events.
+An efficient code focused typed publisher/subscriber event system. Supports global event system and per object event systems that send deferred events to be processed at a later time. Allows regular callback events and multithreaded jobs that trigger on events.
 
 ####Obtain!####
 [Releases](https://github.com/GalvanicGames/unity-events/releases)
@@ -10,6 +10,35 @@ If you'd like the most up to date version (which is the most cool), then pull th
 ## Setup
 
 Once the Unity Events asset has been imported into the project then the event system is ready to be used.
+
+## Simple Usage
+
+### Events ###
+Events in Unity Events are unmanaged structs that that are created by publishers and processed by subscribers.
+
+```csharp
+// This is the example struct that will be used throughout all the examples
+public struct MyExampleEvent
+{
+	// Can pass ANY unmanaged information in these events!
+	public int intValue;
+	public float floatValue;
+
+	public MyExampleEvent(int intValue, float floatValue)
+	{
+		this.intValue = intValue;
+		this.floatValue = floatValue;
+	}
+}
+```
+
+As previously mentioned, Events HAVE to be unmanaged types. This means primitives and structs that only contain primitives. This is done to force "good" habits by only sending copyable data. Since events aren't processed immediately references can be stale or even point to "null" Unity objects. If a reference still needs to be sent (say to a GameObject or a ScriptableObject), create a look up database and send an ID in the event.
+
+If an array/list needs to be sent then consider using something like [ValueTypeLists](https://gist.github.com/cjddmut/cb43af3ee191af78363f41a3188c0f7b).
+
+### Global Event Systems ###
+
+### Local Event Systems ###
 
 ## Event Systems
 
