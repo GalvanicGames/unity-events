@@ -1,6 +1,4 @@
-﻿using UnityEvents;
-
-namespace UnityEventsInternal
+﻿namespace UnityEvents.Internal
 {
 	public interface IEventSystem
 	{

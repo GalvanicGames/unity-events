@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEvents;
 
-namespace UnityEventsInternal
+namespace UnityEvents.Internal
 {
 	public static class GameObjectEventSystem
 	{

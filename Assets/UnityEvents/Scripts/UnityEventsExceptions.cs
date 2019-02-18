@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UnityEventsInternal
+namespace UnityEvents.Internal
 {
 	public class MultipleSubscriptionsException<T> : Exception
 	{

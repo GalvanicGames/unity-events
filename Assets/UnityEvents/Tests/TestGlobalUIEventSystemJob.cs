@@ -3,7 +3,7 @@ using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using UnityEventsInternal;
+using UnityEvents.Internal;
 
 namespace UnityEvents.Test
 {

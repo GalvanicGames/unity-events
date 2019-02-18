@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using UnityEventsInternal;
+using UnityEvents.Internal;
 
 namespace UnityEvents.Test
 {
@@ -30,7 +30,7 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestReservation()
 		{
-			EntityTargetReservation reservation = EventTarget.ReserveTargets(3);
+			EventTargetReservation reservation = EventTarget.ReserveTargets(3);
 			EventTarget target1 = reservation.GetEntityTarget(0);
 			EventTarget target2 = reservation.GetEntityTarget(1);
 			EventTarget target3 = reservation.GetEntityTarget(2);

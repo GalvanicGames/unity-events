@@ -1,7 +1,6 @@
 ﻿using System;
-using UnityEvents;
 
-namespace UnityEventsInternal
+namespace UnityEvents.Internal
 {
 	public struct QueuedEvent<T_Event> where T_Event : struct
 	{

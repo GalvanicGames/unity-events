@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using UnityEventsInternal;
+using UnityEvents.Internal;
 
 namespace UnityEvents.Test
 {

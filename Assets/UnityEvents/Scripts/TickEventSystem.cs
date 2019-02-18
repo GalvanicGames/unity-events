@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEventsInternal;
+using UnityEvents.Internal;
 
 namespace UnityEvents
 {
