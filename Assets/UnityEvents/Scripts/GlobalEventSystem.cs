@@ -16,7 +16,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="callback">The callback that's invoked when an event occurs.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void Subscribe<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
+		public static void Subscribe<T_Event>(Action<T_Event> callback) where T_Event : struct
 		{
 			_simSystem.Subscribe(callback);
 		}
@@ -30,7 +30,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void SubscribeWithJob<T_Job, T_Event>(T_Job job, Action<T_Job> onComplete) 
 			where T_Job : struct, IJobForEvent<T_Event> 
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			_simSystem.SubscribeWithJob<T_Job, T_Event>(job, onComplete);
 		}
@@ -40,7 +40,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="callback">The callback to unsubscribe.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void Unsubscribe<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
+		public static void Unsubscribe<T_Event>(Action<T_Event> callback) where T_Event : struct
 		{
 			_simSystem.Unsubscribe(callback);
 		}
@@ -53,7 +53,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void UnsubscribeWithJob<T_Job, T_Event>(Action<T_Job> onComplete) 
 			where T_Job : struct, IJobForEvent<T_Event> 
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			_simSystem.UnsubscribeWithJob<T_Job, T_Event>(onComplete);
 		}
@@ -63,7 +63,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="ev">The event to send.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void SendEvent<T_Event>(T_Event ev) where T_Event : unmanaged
+		public static void SendEvent<T_Event>(T_Event ev) where T_Event : struct
 		{
 			_simSystem.SendEvent(ev);
 		}
@@ -73,7 +73,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="callback">The callback that's invoked when an event occurs.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void SubscribeUI<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
+		public static void SubscribeUI<T_Event>(Action<T_Event> callback) where T_Event : struct
 		{
 			_uiSystem.Subscribe(callback);
 		}
@@ -87,7 +87,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void SubscribeUIWithJob<T_Job, T_Event>(T_Job job, Action<T_Job> onComplete) 
 			where T_Job : struct, IJobForEvent<T_Event> 
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			_uiSystem.SubscribeWithJob<T_Job, T_Event>(job, onComplete);
 		}
@@ -97,7 +97,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="callback">The callback to unsubscribe.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void UnsubscribeUI<T_Event>(Action<T_Event> callback) where T_Event : unmanaged
+		public static void UnsubscribeUI<T_Event>(Action<T_Event> callback) where T_Event : struct
 		{
 			_uiSystem.Unsubscribe(callback);
 		}
@@ -110,7 +110,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void UnsubscribeUIWithJob<T_Job, T_Event>(Action<T_Job> onComplete) 
 			where T_Job : struct, IJobForEvent<T_Event> 
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			_uiSystem.UnsubscribeWithJob<T_Job, T_Event>(onComplete);
 		}
@@ -120,7 +120,7 @@ namespace UnityEvents
 		/// </summary>
 		/// <param name="ev">The event to send.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public static void SendEventUI<T_Event>(T_Event ev) where T_Event : unmanaged
+		public static void SendEventUI<T_Event>(T_Event ev) where T_Event : struct
 		{
 			_uiSystem.SendEvent(ev);
 		}

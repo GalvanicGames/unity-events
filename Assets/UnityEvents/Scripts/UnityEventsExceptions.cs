@@ -13,7 +13,7 @@ namespace UnityEventsInternal
 	}
 
 	public class SubscriberStillListeningException<T_Callback, T_Event> : Exception
-		where T_Event : unmanaged
+		where T_Event : struct
 	{
 		public SubscriberStillListeningException(List<Action<T_Callback>> listeners)
 			: base(GenerateMessage(listeners))
@@ -38,5 +38,24 @@ namespace UnityEventsInternal
 
 			return msg;
 		}
+	}
+
+	public class IndexOutOfReservedTargetsException : Exception
+	{
+		
+	}
+
+	public class EventTypeNotBlittableException : Exception
+	{
+		public EventTypeNotBlittableException(Type type) 
+			: base($"Event type {type.Name} must be blittable!")
+		{}
+	}
+	
+	public class JobTypeNotBlittableException : Exception
+	{
+		public JobTypeNotBlittableException(Type type) 
+			: base($"Job type {type.Name} must be blittable!")
+		{}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using UnityEventsInternal;
+﻿using UnityEngine;
+using UnityEventsInternal;
 
 namespace UnityEvents.Test
 {
@@ -20,6 +21,11 @@ namespace UnityEvents.Test
 		{
 			this.value = value;
 		}
+	}
+
+	public struct UnblittableEvent
+	{
+		public GameObject gObj;
 	}
 
 	public struct TestJob : IJobForEvent<EvSimpleEvent>
@@ -65,6 +71,22 @@ namespace UnityEvents.Test
 		{
 			result = 0;
 			result += ev.value;
+		}
+	}
+
+	public struct TestUnblittableJob : IJobForEvent<EvSimpleEvent>
+	{
+		public GameObject gObj;
+		
+		public void ExecuteEvent(EvSimpleEvent ev)
+		{
+		}
+	}
+	
+	public struct TestBlittableJobForUnblittable : IJobForEvent<UnblittableEvent>
+	{
+		public void ExecuteEvent(UnblittableEvent ev)
+		{
 		}
 	}
 }

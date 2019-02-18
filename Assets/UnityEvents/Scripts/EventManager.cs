@@ -22,7 +22,7 @@ namespace UnityEvents
 		/// <param name="tick">The update type to subscribe to.</param>
 		/// <typeparam name="T_Event">The event</typeparam>
 		public static void Subscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback, EventUpdateTick tick)
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			if (tick == EventUpdateTick.FixedUpdate)
 			{
@@ -53,7 +53,7 @@ namespace UnityEvents
 			Action<T_Job> onComplete,
 			EventUpdateTick tick)
 			where T_Job : struct, IJobForEvent<T_Event>
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			if (tick == EventUpdateTick.FixedUpdate)
 			{
@@ -77,7 +77,7 @@ namespace UnityEvents
 		/// <param name="tick">The update type to unsubscribe to.</param>
 		/// <typeparam name="T_Event">The event</typeparam>
 		public static void Unsubscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback, EventUpdateTick tick)
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			if (tick == EventUpdateTick.FixedUpdate)
 			{
@@ -104,7 +104,7 @@ namespace UnityEvents
 		public static void UnsubscribeWithJob<T_Job, T_Event>(EventTarget target, Action<T_Job> onComplete,
 			EventUpdateTick tick)
 			where T_Job : struct, IJobForEvent<T_Event>
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			if (tick == EventUpdateTick.FixedUpdate)
 			{
@@ -128,7 +128,7 @@ namespace UnityEvents
 		/// <param name="tick">The update tick to send to.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public static void SendEvent<T_Event>(EventTarget target, T_Event ev, EventUpdateTick tick)
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			if (tick == EventUpdateTick.FixedUpdate)
 			{

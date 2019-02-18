@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEventsInternal;
@@ -12,7 +13,7 @@ namespace UnityEvents
 	/// Event system that processes regular events.
 	/// </summary>
 	/// <typeparam name="T_Event">The event the system is responsible for.</typeparam>
-	public class EventHandlerStandard<T_Event> : IEventSystem, IDisposable where T_Event : unmanaged
+	public class EventHandlerStandard<T_Event> : IEventSystem, IDisposable where T_Event : struct
 	{
 		private NativeList<QueuedEvent<T_Event>> _queuedEvents;
 		private NativeList<EventTarget> _subscribers;
@@ -46,6 +47,12 @@ namespace UnityEvents
 			int queuedEventsStartingCapacity,
 			int parallelBatchCount)
 		{
+#if !DISABLE_EVENT_SAFETY_CHKS
+			if (!UnsafeUtility.IsBlittable<T_Event>())
+			{
+				throw new EventTypeNotBlittableException(typeof(T_Event));
+			}
+#endif
 			_batchCount = parallelBatchCount;
 
 			_subscribers = new NativeList<EventTarget>(subscriberStartingCapacity, Allocator.Persistent);

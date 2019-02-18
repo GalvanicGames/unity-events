@@ -47,20 +47,20 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestOtherUnsubscribe()
 		{
-			EventTarget entity1 = EventTarget.CreateTarget();
-			EventTarget entity2 = EventTarget.CreateTarget();
+			EventTarget target1 = EventTarget.CreateTarget();
+			EventTarget target2 = EventTarget.CreateTarget();
 
 			int value = 0;
 
 			Action<EvSimpleEvent> callback = x => value += x.value;
 
-			_system.Subscribe(entity1, callback);
-			_system.Subscribe(entity2, callback);
-			_system.Unsubscribe(entity2, callback);
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
+			_system.Subscribe(target1, callback);
+			_system.Subscribe(target2, callback);
+			_system.Unsubscribe(target2, callback);
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
 
 			_system.ProcessEvents();
-			_system.Unsubscribe(entity1, callback);
+			_system.Unsubscribe(target1, callback);
 			_system.VerifyNoSubscribers();
 
 			Assert.IsTrue(value == 10);
@@ -69,20 +69,20 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMeUnsubscribe()
 		{
-			EventTarget entity1 = EventTarget.CreateTarget();
-			EventTarget entity2 = EventTarget.CreateTarget();
+			EventTarget target1 = EventTarget.CreateTarget();
+			EventTarget target2 = EventTarget.CreateTarget();
 
 			int value = 0;
 
 			Action<EvSimpleEvent> callback = x => value += x.value;
 
-			_system.Subscribe(entity1, callback);
-			_system.Subscribe(entity2, callback);
-			_system.Unsubscribe(entity1, callback);
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
+			_system.Subscribe(target1, callback);
+			_system.Subscribe(target2, callback);
+			_system.Unsubscribe(target1, callback);
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
 
 			_system.ProcessEvents();
-			_system.Unsubscribe(entity2, callback);
+			_system.Unsubscribe(target2, callback);
 			_system.VerifyNoSubscribers();
 
 			Assert.IsTrue(value == 0);
@@ -117,8 +117,8 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMultipleEntities()
 		{
-			EventTarget entity1 = EventTarget.CreateTarget();
-			EventTarget entity2 = EventTarget.CreateTarget();
+			EventTarget target1 = EventTarget.CreateTarget();
+			EventTarget target2 = EventTarget.CreateTarget();
 
 			int value1 = 0;
 			int value2 = 0;
@@ -126,14 +126,14 @@ namespace UnityEvents.Test
 			Action<EvSimpleEvent> callback = x => value1 += x.value;
 			Action<EvSimpleEvent> callback2 = x => value2 += x.value;
 
-			_system.Subscribe(entity1, callback);
-			_system.Subscribe(entity2, callback2);
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.Subscribe(target1, callback);
+			_system.Subscribe(target2, callback2);
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 
 			_system.ProcessEvents();
-			_system.Unsubscribe(entity1, callback);
-			_system.Unsubscribe(entity2, callback2);
+			_system.Unsubscribe(target1, callback);
+			_system.Unsubscribe(target2, callback2);
 			_system.VerifyNoSubscribers();
 
 			Assert.IsTrue(value1 == 10);
@@ -155,8 +155,8 @@ namespace UnityEvents.Test
 		[Test]
 		public void TestMultipleSubscribeUnsubscribesEvents()
 		{
-			EventTarget entity1 = EventTarget.CreateTarget();
-			EventTarget entity2 = EventTarget.CreateTarget();
+			EventTarget target1 = EventTarget.CreateTarget();
+			EventTarget target2 = EventTarget.CreateTarget();
 
 			int value1 = 0;
 			int value2 = 0;
@@ -164,63 +164,72 @@ namespace UnityEvents.Test
 			Action<EvSimpleEvent> callback = x => value1 += x.value;
 			Action<EvSimpleEvent> callback2 = x => value2 += x.value;
 
-			_system.Subscribe(entity1, callback);
-			_system.Subscribe(entity2, callback2);
-			_system.Unsubscribe(entity2, callback2);
+			_system.Subscribe(target1, callback);
+			_system.Subscribe(target2, callback2);
+			_system.Unsubscribe(target2, callback2);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value1 == 10);
 			Assert.IsTrue(value2 == 0);
 
-			_system.Subscribe(entity2, callback2);
+			_system.Subscribe(target2, callback2);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value1 == 20);
 			Assert.IsTrue(value2 == 30);
 
-			_system.Unsubscribe(entity1, callback);
+			_system.Unsubscribe(target1, callback);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value1 == 20);
 			Assert.IsTrue(value2 == 60);
 
-			_system.Subscribe(entity1, callback);
+			_system.Subscribe(target1, callback);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value1 == 30);
 			Assert.IsTrue(value2 == 90);
 
-			_system.Unsubscribe(entity2, callback2);
+			_system.Unsubscribe(target2, callback2);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			Assert.IsTrue(value1 == 40);
 			Assert.IsTrue(value2 == 90);
 
-			_system.Unsubscribe(entity1, callback);
+			_system.Unsubscribe(target1, callback);
 
-			_system.QueueEvent(entity1, new EvSimpleEvent(10));
-			_system.QueueEvent(entity2, new EvSimpleEvent(30));
+			_system.QueueEvent(target1, new EvSimpleEvent(10));
+			_system.QueueEvent(target2, new EvSimpleEvent(30));
 			_system.ProcessEvents();
 
 			_system.VerifyNoSubscribers();
 
 			Assert.IsTrue(value1 == 40);
 			Assert.IsTrue(value2 == 90);
+		}
+
+		[Test]
+		public void TestUnblittableEvent()
+		{
+			Assert.Throws<EventTypeNotBlittableException>(() =>
+			{
+				EventHandlerStandard<UnblittableEvent> system = new EventHandlerStandard<UnblittableEvent>();
+			});
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace UnityEvents
 		/// <param name="target">The entity to subscribe to.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public void Subscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : unmanaged
+		public void Subscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : struct
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.Subscribe(target, eventCallback);
@@ -40,7 +40,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The job type.</typeparam>
 		public void SubscribeWithJob<T_Job, T_Event>(EventTarget target, T_Job job, Action<T_Job> onComplete)
 			where T_Job : struct, IJobForEvent<T_Event>
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
 			handler.Subscribe(target, job, onComplete);
@@ -52,7 +52,7 @@ namespace UnityEvents
 		/// <param name="target">The entity to unsubscribe from.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
-		public void Unsubscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : unmanaged
+		public void Unsubscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : struct
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.Unsubscribe(target, eventCallback);
@@ -67,7 +67,7 @@ namespace UnityEvents
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void UnsubscribeWithJob<T_Job, T_Event>(EventTarget target, Action<T_Job> onComplete)
 			where T_Job : struct, IJobForEvent<T_Event>
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			EventHandlerJob<T_Job, T_Event> handler = GetJobSystem<T_Job, T_Event>();
 			handler.Unsubscribe(target, onComplete);
@@ -79,7 +79,7 @@ namespace UnityEvents
 		/// <param name="target">The entity to queue an event with.</param>
 		/// <param name="ev">The event to queue.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
-		public void QueueEvent<T_Event>(EventTarget target, T_Event ev) where T_Event : unmanaged
+		public void QueueEvent<T_Event>(EventTarget target, T_Event ev) where T_Event : struct
 		{
 			EventHandlerStandard<T_Event> system = GetSystem<T_Event>();
 			system.QueueEvent(target, ev);
@@ -171,7 +171,7 @@ namespace UnityEvents
 			}
 		}
 
-		private EventHandlerStandard<T_Event> GetSystem<T_Event>() where T_Event : unmanaged
+		private EventHandlerStandard<T_Event> GetSystem<T_Event>() where T_Event : struct
 		{
 			IEventSystem system;
 
@@ -187,7 +187,7 @@ namespace UnityEvents
 
 		private EventHandlerJob<T_Job, T_Event> GetJobSystem<T_Job, T_Event>()
 			where T_Job : struct, IJobForEvent<T_Event>
-			where T_Event : unmanaged
+			where T_Event : struct
 		{
 			IEventSystem system;
 
@@ -201,7 +201,7 @@ namespace UnityEvents
 			return (EventHandlerJob<T_Job, T_Event>) system;
 		}
 
-		private List<IEventSystem> GetJobSystemsForEvent<T_Event>() where T_Event : unmanaged
+		private List<IEventSystem> GetJobSystemsForEvent<T_Event>() where T_Event : struct
 		{
 			List<IEventSystem> list;
 

@@ -9,12 +9,12 @@ namespace UnityEventsInternal
 		void VerifyNoSubscribers();
 	}
 
-	public interface IJobEventSystem<T> : IEventSystem where T: unmanaged
+	public interface IJobEventSystem<T> : IEventSystem where T: struct
 	{
 		void QueueEvent(EventTarget target, T ev);
 	}
 
-	public interface IJobForEvent<T> where T : unmanaged
+	public interface IJobForEvent<T> where T : struct
 	{
 		void ExecuteEvent(T ev);
 	}

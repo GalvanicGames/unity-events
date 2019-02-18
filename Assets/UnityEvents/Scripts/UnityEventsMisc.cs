@@ -3,7 +3,7 @@ using UnityEvents;
 
 namespace UnityEventsInternal
 {
-	public struct QueuedEvent<T_Event> where T_Event : unmanaged
+	public struct QueuedEvent<T_Event> where T_Event : struct
 	{
 		public EventTarget target;
 		public T_Event ev;
@@ -15,7 +15,7 @@ namespace UnityEventsInternal
 		}
 	}
 
-	public struct UnityEvent<T_Event> where T_Event : unmanaged
+	public struct UnityEvent<T_Event> where T_Event : struct
 	{
 		public readonly T_Event ev;
 		public readonly int subscriberIndex;

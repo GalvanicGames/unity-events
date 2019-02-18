@@ -18,7 +18,7 @@ namespace UnityEvents
 		IJobEventSystem<T_Event>,
 		IDisposable
 		where T_Job : struct, IJobForEvent<T_Event>
-		where T_Event : unmanaged
+		where T_Event : struct
 	{
 		private NativeList<QueuedEvent<T_Event>> _queuedEvents;
 		private NativeList<Subscription> _subscribers;
@@ -77,6 +77,17 @@ namespace UnityEvents
 			int queuedEventsStartingCapacity,
 			int parallelBatchCount)
 		{
+#if !DISABLE_EVENT_SAFETY_CHKS
+			if (!UnsafeUtility.IsBlittable<T_Job>())
+			{
+				throw new JobTypeNotBlittableException(typeof(T_Job));
+			}
+
+			if (!UnsafeUtility.IsBlittable<T_Event>())
+			{
+				throw new EventTypeNotBlittableException(typeof(T_Event));
+			}
+#endif
 			_batchCount = parallelBatchCount;
 
 			_subscribers = new NativeList<Subscription>(subscriberStartingCapacity, Allocator.Persistent);
