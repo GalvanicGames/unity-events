@@ -70,8 +70,11 @@ public void SendEvents()
 
 ```
 
-## UNMANAGED NOTE!
-Unity Events 2.0 requires that events are [unmanaged](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters) types. This is done to allow better compatibility with the burst compiler when using jobs on events and to encourage "better" programming practices since the events are deferred. References may become stale and GameObjects may have been destroyed and are "null" by the time the event is processed. Send the data the event represents rather than a reference to an object. If a reference is needed then create a look up database and send the id of the object for event listeners to look up to process on. If an array/list is needed then consider using something like [ValueTypeLists](https://gist.github.com/cjddmut/cb43af3ee191af78363f41a3188c0f7b).
+## BLITTABLE NOTE!
+Unity Events 2.0 requires that events/jobs are [blittable](https://docs.microsoft.com/en-us/dotnet/framework/interop/blittable-and-non-blittable-types) types. This is done to allow compatibility with the burst compiler and Unity's Job system. Also has a benefit of encouraging "better" programming practices since the events are deferred. References may become stale and GameObjects may have been destroyed and are "null" by the time the event is processed. Send the data the event represents rather than a reference to an object. If a reference is needed then create a look up database and send the id of the object for event listeners to look up to process on. If an array/list is needed then consider using something like [ValueTypeLists](https://gist.github.com/cjddmut/cb43af3ee191af78363f41a3188c0f7b).
+
+## 'DISABLE_EVENT_SAFETY_CHKS' Define Symbol
+Unity Events 2.0 does various safety checks to make sure it isn't being used inappropriately. These can be turned off by defning 'DISABLE_EVENT_SAFETY_CHKS' with the compiler (or in Unity go to 'Player Settings > Scripting Define Symbols'). Turning it off can improve performance since no checks will always be faster than any check. Use at your own risk!
 
 ## Dropped Features
 Unity Events 2.0 was rebuilt with performance and flexibility more in mind. Because of this some features of the original version of Unity Events have been dropped. If these features are important than the previous version of Unity Events can be found [here](https://github.com/GalvanicGames/unity-events/releases/tag/1.0).
