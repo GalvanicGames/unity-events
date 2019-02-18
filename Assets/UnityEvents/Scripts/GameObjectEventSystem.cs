@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using UnityEvents;
+using UnityEvents.Internal;
 
-namespace UnityEvents.Internal
+namespace UnityEvents
 {
 	public static class GameObjectEventSystem
 	{
