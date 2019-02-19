@@ -31,7 +31,7 @@ namespace UnityEvents
 		/// <summary>
 		/// Subscribe a listener to an event.
 		/// </summary>
-		/// <param name="target">The entity to subscribe to.</param>
+		/// <param name="target">The target to subscribe to.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
 		public void Subscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : struct
@@ -43,7 +43,7 @@ namespace UnityEvents
 		/// <summary>
 		/// Subscribe a job that processes during an event.
 		/// </summary>
-		/// <param name="target">The entity to subscribe to.</param>
+		/// <param name="target">The target to subscribe to.</param>
 		/// <param name="job">The job, and starting data, to run when the event fires.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
 		/// <typeparam name="T_Job">The event type.</typeparam>
@@ -59,7 +59,7 @@ namespace UnityEvents
 		/// <summary>
 		/// Unsubscribe a listener from an event. 
 		/// </summary>
-		/// <param name="target">The entity to unsubscribe from.</param>
+		/// <param name="target">The target to unsubscribe from.</param>
 		/// <param name="eventCallback">The event callback</param>
 		/// <typeparam name="T_Event">The event</typeparam>
 		public void Unsubscribe<T_Event>(EventTarget target, Action<T_Event> eventCallback) where T_Event : struct
@@ -71,7 +71,7 @@ namespace UnityEvents
 		/// <summary>
 		/// Unsubscribe a job that processed during from an event.
 		/// </summary>
-		/// <param name="target">The entity to unsubscribe from.</param>
+		/// <param name="target">The target to unsubscribe from.</param>
 		/// <param name="onComplete">The callback that is invoked when the job has finished.</param>
 		/// <typeparam name="T_Job">The job type.</typeparam>
 		/// <typeparam name="T_Event">The event type.</typeparam>
@@ -86,7 +86,7 @@ namespace UnityEvents
 		/// <summary>
 		/// Queue an event.
 		/// </summary>
-		/// <param name="target">The entity to queue an event with.</param>
+		/// <param name="target">The target to queue an event with.</param>
 		/// <param name="ev">The event to queue.</param>
 		/// <typeparam name="T_Event">The event type.</typeparam>
 		public void QueueEvent<T_Event>(EventTarget target, T_Event ev) where T_Event : struct
@@ -104,6 +104,8 @@ namespace UnityEvents
 				typedSystem.QueueEvent(target, ev);
 			}
 		}
+		
+		public void QueueEvent
 		
 		/// <summary>
 		/// Process all queued events.
