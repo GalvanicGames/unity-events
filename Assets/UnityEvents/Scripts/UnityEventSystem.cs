@@ -105,8 +105,6 @@ namespace UnityEvents
 			}
 		}
 		
-		public void QueueEvent
-		
 		/// <summary>
 		/// Process all queued events.
 		/// </summary>
