@@ -133,11 +133,6 @@ namespace UnityEvents
 		/// <param name="ev">The event to queue.</param>
 		public void QueueEvent(EventTarget target, T_Event ev)
 		{
-			if (_subscribers.Length == 0)
-			{
-				return;
-			}
-			
 			_queuedEvents.Add(new QueuedEvent<T_Event>(target, ev));
 		}
 
