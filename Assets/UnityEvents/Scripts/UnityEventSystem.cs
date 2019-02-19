@@ -17,6 +17,16 @@ namespace UnityEvents
 
 		private Dictionary<Type, List<IEventSystem>> _eventToJobSystems =
 			new Dictionary<Type, List<IEventSystem>>();
+		
+		// Cache, hit the same event multiple for better results
+		private Type _cachedSystemEventType;
+		private IEventSystem _cacheSystem;
+		
+		private Type _cachedJobSystemsType;
+		private List<IEventSystem> _cachedJobSystems;
+
+		private Type _cachedJobSystemType;
+		private IEventSystem _cachedJobSystem;
 
 		/// <summary>
 		/// Subscribe a listener to an event.
@@ -173,14 +183,24 @@ namespace UnityEvents
 
 		private EventHandlerStandard<T_Event> GetSystem<T_Event>() where T_Event : struct
 		{
+			Type evType = typeof(T_Event);
+
+			if (evType == _cachedSystemEventType)
+			{
+				return (EventHandlerStandard<T_Event>) _cacheSystem;
+			}
+			
 			IEventSystem system;
 
-			if (!_systemsCache.TryGetValue(typeof(T_Event), out system))
+			if (!_systemsCache.TryGetValue(evType, out system))
 			{
 				system = new EventHandlerStandard<T_Event>();
 				_systems.Add(system);
-				_systemsCache[typeof(T_Event)] = system;
+				_systemsCache[evType] = system;
 			}
+
+			_cachedSystemEventType = evType;
+			_cacheSystem = system;
 
 			return (EventHandlerStandard<T_Event>) system;
 		}
@@ -189,6 +209,13 @@ namespace UnityEvents
 			where T_Job : struct, IJobForEvent<T_Event>
 			where T_Event : struct
 		{
+			Type jobType = typeof(T_Job);
+
+			if (jobType == _cachedJobSystemType)
+			{
+				return (EventHandlerJob<T_Job, T_Event>) _cachedJobSystem;
+			}
+			
 			IEventSystem system;
 
 			if (!_jobSystemsCache.TryGetValue(typeof(T_Job), out system))
@@ -198,18 +225,31 @@ namespace UnityEvents
 				_jobSystemsCache[typeof(T_Job)] = system;
 			}
 
+			_cachedJobSystemType = jobType;
+			_cachedJobSystem = system;
+
 			return (EventHandlerJob<T_Job, T_Event>) system;
 		}
 
 		private List<IEventSystem> GetJobSystemsForEvent<T_Event>() where T_Event : struct
 		{
+			Type evType = typeof(T_Event);
+
+			if (evType == _cachedJobSystemsType)
+			{
+				return _cachedJobSystems;
+			}
+			
 			List<IEventSystem> list;
 
-			if (!_eventToJobSystems.TryGetValue(typeof(T_Event), out list))
+			if (!_eventToJobSystems.TryGetValue(evType, out list))
 			{
 				list = new List<IEventSystem>();
-				_eventToJobSystems[typeof(T_Event)] = list;
+				_eventToJobSystems[evType] = list;
 			}
+
+			_cachedJobSystemsType = evType;
+			_cachedJobSystems = list;
 
 			return list;
 		}
